@@ -229,4 +229,27 @@ public class GoodsManager {
 		}
 	}
 	
+	public void ChangeGoods_count(int goods_num,int goods_count) throws Exception {
+		if("".equals(String.valueOf(goods_num))) throw new Exception("商品编号不可为空");
+		Connection conn = null;
+		try {
+			conn = DBUtil.getConnection();
+			String sql = "UPDATE goods\r\n" + 
+					"SET goods_count=?\r\n" + 
+					"WHERE goods_num=?";
+			java.sql.PreparedStatement pst = conn.prepareStatement(sql);
+			pst.setInt(1, goods_count);
+			pst.setInt(2, goods_num);
+			pst.execute();
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}finally{
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO 自动生成的 catch 块
+				e.printStackTrace();
+			}
+		}
+	}
 }
