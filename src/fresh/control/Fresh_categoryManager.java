@@ -9,6 +9,11 @@ import fresh.model.BeanFresh_category;
 import fresh.util.DBUtil;
 
 public class Fresh_categoryManager {
+	public static void main(String[] args) throws Exception {
+		Fresh_categoryManager fc = new Fresh_categoryManager();
+		fc.changename(1, "樱桃");
+	}
+	
 	public void add(String name,String des) throws Exception {
 		if(name==null) throw new Exception("类别名称不能为空");
 		if(des==null) throw new Exception("类别描述不能为空") ;
@@ -52,6 +57,7 @@ public class Fresh_categoryManager {
 			sql="UPDATE fresh_category\r\n" + 
 					"SET Category_name=?\r\n" + 
 					"where Category_number=?";
+			pst=conn.prepareStatement(sql);
 			pst.setString(1,category_name);
 			pst.setInt(2, category_num);
 			pst.execute();

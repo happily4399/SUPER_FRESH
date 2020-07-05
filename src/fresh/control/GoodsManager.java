@@ -13,7 +13,7 @@ public class GoodsManager {
 			float goods_price,int goods_count,String goods_spe,String goods_det) throws Exception {
 		
 		if("".equals(String.valueOf(category_num))) throw new Exception("类别编号不可为空");
-		if(goods_name==null) throw new Exception("商品名不可为空");
+		if("".equals(goods_name)) throw new Exception("商品名不可为空");
 		if("".equals(String.valueOf(goods_price))) throw new Exception("商品价格不可为空");
 		if("".equals(String.valueOf(goods_count))) throw new Exception("商品数量不可为空");
 		
@@ -147,13 +147,12 @@ public class GoodsManager {
 			else {
 				bg.setGoods_num(rs.getInt(1));
 				bg.setCate_gory_number(rs.getInt(2));
-				bg.setPro_num(rs.getInt(3));
-				bg.setGoods_name(rs.getString(4));
-				bg.setGoods_price(rs.getFloat(5));
-				bg.setVip_price(rs.getFloat(6));
-				bg.setGoods_count(rs.getInt(7));
-				bg.setGoods_spe(rs.getString(8));
-				bg.setGoods_det(rs.getString(9));
+				bg.setGoods_name(rs.getString(3));
+				bg.setGoods_price(rs.getFloat(4));
+				bg.setVip_price(rs.getFloat(5));
+				bg.setGoods_count(rs.getInt(6));
+				bg.setGoods_spe(rs.getString(7));
+				bg.setGoods_det(rs.getString(8));
 			}
 			pst.close();
 		}catch (SQLException e) {
@@ -167,6 +166,68 @@ public class GoodsManager {
 			}
 		}
 		return bg;
+	}
+	
+	public int LoadGoods_count(int goods_num) throws Exception {
+		if("".equals(String.valueOf(goods_num))) throw new Exception("商品编号不可为空");
+		int count=0;
+		Connection conn = null;
+		try {
+			conn = DBUtil.getConnection();
+			String sql = "SELECT goods_count\r\n" + 
+					"FROM goods\r\n" + 
+					"WHERE goods_num=?";
+			java.sql.PreparedStatement pst = conn.prepareStatement(sql);
+			pst.setInt(1, goods_num);
+			java.sql.ResultSet rs = pst.executeQuery();
+			if(!rs.next()) throw new Exception("商品编号对应的商品不存在");
+			else {
+				count = rs.getInt(1);
+			}
+			rs.close();
+			pst.close();
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}finally{
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO 自动生成的 catch 块
+				e.printStackTrace();
+			}
+		}
+		return count;
+	}
+	
+	public float LoadGoods_price(int goods_num) throws Exception {
+		if("".equals(String.valueOf(goods_num))) throw new Exception("商品编号不可为空");
+		 float price=0;
+		Connection conn = null;
+		try {
+			conn = DBUtil.getConnection();
+			String sql = "SELECT goods_price\r\n" + 
+					"FROM goods\r\n" + 
+					"WHERE goods_num=?";
+			java.sql.PreparedStatement pst = conn.prepareStatement(sql);
+			pst.setInt(1, goods_num);
+			java.sql.ResultSet rs = pst.executeQuery();
+			if(!rs.next()) throw new Exception("商品编号对应的商品不存在");
+			else {
+				price = rs.getFloat(1);
+			}
+			rs.close();
+			pst.close();
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}finally{
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO 自动生成的 catch 块
+				e.printStackTrace();
+			}
+		}
+		return price;
 	}
 	
 	public List<BeanGoods> Loadall () throws Exception {
@@ -215,6 +276,102 @@ public class GoodsManager {
 					"WHERE goods_num=?";
 			java.sql.PreparedStatement pst = conn.prepareStatement(sql);
 			pst.setString(1, goods_name);
+			pst.setInt(2, goods_num);
+			pst.execute();
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}finally{
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO 自动生成的 catch 块
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public void ChangeGoods_count(int goods_num,int goods_count) throws Exception {
+		if("".equals(String.valueOf(goods_num))) throw new Exception("商品编号不可为空");
+		Connection conn = null;
+		try {
+			conn = DBUtil.getConnection();
+			String sql = "UPDATE goods\r\n" + 
+					"SET goods_count=?\r\n" + 
+					"WHERE goods_num=?";
+			java.sql.PreparedStatement pst = conn.prepareStatement(sql);
+			pst.setInt(1, goods_count);
+			pst.setInt(2, goods_num);
+			pst.execute();
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}finally{
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO 自动生成的 catch 块
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public void AddGoods_count(int goods_num,int Add_count) throws Exception {
+		if("".equals(String.valueOf(goods_num))) throw new Exception("商品编号不可为空");
+		Connection conn = null;
+		try {
+			conn = DBUtil.getConnection();
+			String sql = "UPDATE goods\r\n" + 
+					"SET goods_count=goods_count+?\r\n" + 
+					"WHERE goods_num=?";
+			java.sql.PreparedStatement pst = conn.prepareStatement(sql);
+			pst.setInt(1, Add_count);
+			pst.setInt(2, goods_num);
+			pst.execute();
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}finally{
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO 自动生成的 catch 块
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public void ReduceGoods_count(int goods_num,int Reduce_count) throws Exception {
+		if("".equals(String.valueOf(goods_num))) throw new Exception("商品编号不可为空");
+		Connection conn = null;
+		try {
+			conn = DBUtil.getConnection();
+			String sql = "UPDATE goods\r\n" + 
+					"SET goods_count=goods_count-?\r\n" + 
+					"WHERE goods_num=?";
+			java.sql.PreparedStatement pst = conn.prepareStatement(sql);
+			pst.setInt(1, Reduce_count);
+			pst.setInt(2, goods_num);
+			pst.execute();
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}finally{
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO 自动生成的 catch 块
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public void ChangeGoods_price(int goods_num,float goods_price) throws Exception {
+		if("".equals(String.valueOf(goods_num))) throw new Exception("商品编号不可为空");
+		Connection conn = null;
+		try {
+			conn = DBUtil.getConnection();
+			String sql = "UPDATE goods\r\n" + 
+					"SET goods_price=?\r\n" + 
+					"WHERE goods_num=?";
+			java.sql.PreparedStatement pst = conn.prepareStatement(sql);
+			pst.setFloat(1, goods_price);
 			pst.setInt(2, goods_num);
 			pst.execute();
 		}catch (SQLException e) {

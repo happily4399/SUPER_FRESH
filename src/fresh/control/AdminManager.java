@@ -12,9 +12,9 @@ import fresh.util.DBUtil;
 public class AdminManager {
 	
 	public BeanAdmin reg(String admin_num,String admin_name,String admin_pwd,String admin_pwd2) throws Exception{
-		if(admin_num==null) throw new Exception("员工编号不能为空");
-		if(admin_name==null) throw new Exception("注册的姓名不能为空！！");
-		if(admin_pwd==null) throw new Exception("密码不能为空");
+		if("".equals(admin_num)) throw new Exception("员工编号不能为空");
+		if("".equals(admin_name)) throw new Exception("注册的姓名不能为空！！");
+		if("".equals(admin_pwd)) throw new Exception("密码不能为空");
 		if(!(admin_pwd.equals(admin_pwd2))) throw new Exception("两次输入的密码不一致");
 		BeanAdmin ba=new BeanAdmin();
 		Connection conn=null;
@@ -193,7 +193,7 @@ public class AdminManager {
 	}
 	
 	public BeanAdmin loadbynum(String num) throws Exception {
-		if(num==null) throw new Exception("员工编号不能为空");
+		if("".equals(num)) throw new Exception("员工编号不能为空");
 		BeanAdmin ba = new BeanAdmin();
 		Connection conn = null;
 		try {

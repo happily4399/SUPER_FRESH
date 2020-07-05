@@ -12,7 +12,7 @@ public class BeanUser {
 	private int User_vip;
 	private java.util.Date vip_ddl;
 	private String User_state;
-	
+	public static BeanUser currentloginUser = null; 
 	public String getUser_state() {
 		return User_state;
 	}

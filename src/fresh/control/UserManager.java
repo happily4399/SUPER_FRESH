@@ -17,12 +17,12 @@ public class UserManager {
 	}
 	
 	public BeanUser reg(String User_name,String User_sex,String User_pwd,String User_Pnum,String User_email,String User_city) throws Exception {
-		if(User_name==null) throw new Exception("用户姓名不能为空");
-		if(User_sex==null) throw new Exception("用户性别不能为空");
-		if(User_pwd==null) throw new Exception("用户密码不能为空");
-		if(User_Pnum==null) throw new Exception("手机号不能为空");
-		if(User_email==null) throw new Exception("用户邮箱不能为空");
-		if(User_city==null) throw new Exception("所在城市不能为空");
+		if("".equals(User_name)) throw new Exception("用户姓名不能为空");
+		if("".equals(User_sex)) throw new Exception("用户性别不能为空");
+		if("".equals(User_pwd)) throw new Exception("用户密码不能为空");
+		if("".equals(User_Pnum)) throw new Exception("手机号不能为空");
+		if("".equals(User_email)) throw new Exception("用户邮箱不能为空");
+		if("".equals(User_city)) throw new Exception("所在城市不能为空");
 		BeanUser bu = new BeanUser();
 		Connection conn = null;
 		try {
@@ -75,8 +75,8 @@ public class UserManager {
 	}
 	
 	public BeanUser login(String user_Pnum,String user_pwd) throws Exception {
-		if(user_Pnum==null) throw new Exception("手机号不能为空");
-		if(user_pwd==null) throw new Exception("用户密码不能为空");
+		if("".equals(user_Pnum)) throw new Exception("手机号不能为空");
+		if("".equals(user_pwd)) throw new Exception("用户密码不能为空");
 		BeanUser bu = new BeanUser();
 		Connection conn = null;
 		try {
@@ -183,14 +183,44 @@ public class UserManager {
 		}
 	}
 	
-	public void Delete(String user_Pnum) {
+	public void Delete(String user_Pnum) throws Exception {
 		Connection conn=null;
 		try {
 			conn=DBUtil.getConnection();
-			String sql="DELETE \r\n" + 
+			String sql="SELECT *\r\n" + 
+					"FROM shipping\r\n" + 
+					"WHERE user_Pnum=?";
+			java.sql.PreparedStatement pst = conn.prepareStatement(sql);
+			pst.setString(1, user_Pnum);
+			java.sql.ResultSet rs = pst.executeQuery();
+			if(rs.next()) throw new Exception("shipping表中仍存在此商品，拒绝删除");
+			rs.close();
+			pst.close();
+			
+			sql="SELECT *\r\n" + 
+					"FROM goods_order\r\n" + 
+					"WHERE user_Pnum=?";
+			pst = conn.prepareStatement(sql);
+			pst.setString(1, user_Pnum);
+			rs = pst.executeQuery();
+			if(rs.next()) throw new Exception("goods_order表中仍存在此用户信息，拒绝删除");
+			rs.close();
+			pst.close();
+			
+			sql="SELECT *\r\n" + 
+					"FROM Goods_evaluation\r\n" + 
+					"WHERE user_Pnum=?";
+			pst = conn.prepareStatement(sql);
+			pst.setString(1, user_Pnum);
+			rs = pst.executeQuery();
+			if(rs.next()) throw new Exception("Goods_evaluation表中仍存在此用户信息，拒绝删除");
+			rs.close();
+			pst.close();
+			
+			sql="DELETE \r\n" + 
 					"FROM user\r\n" + 
 					"WHERE user_Pnum=?";
-			java.sql.PreparedStatement pst=conn.prepareStatement(sql);
+			pst=conn.prepareStatement(sql);
 			pst.setString(1, user_Pnum);
 			pst.execute();
 		}catch (SQLException e) {
@@ -206,7 +236,7 @@ public class UserManager {
 	}
 	
 	public BeanUser loadbyPnum(String Pnum) throws Exception {
-		if(Pnum==null) throw new Exception("手机号不能为空");
+		if("".equals(Pnum)) throw new Exception("手机号不能为空");
 		BeanUser bu = new BeanUser();
 		Connection conn = null;
 		try {

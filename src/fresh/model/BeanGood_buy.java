@@ -5,7 +5,7 @@ public class BeanGood_buy {
 	private int Category_number;
 	private int buy_count;
 	private int goods_num;
-	private int admin_num;
+	private String admin_num;
 	private String buy_state;
 	
 	public int getGoods_num() {
@@ -14,10 +14,10 @@ public class BeanGood_buy {
 	public void setGoods_num(int goods_num) {
 		this.goods_num = goods_num;
 	}
-	public int getAdmin_num() {
+	public String getAdmin_num() {
 		return admin_num;
 	}
-	public void setAdmin_num(int admin_num) {
+	public void setAdmin_num(String admin_num) {
 		this.admin_num = admin_num;
 	}
 	public int getBuy_num() {

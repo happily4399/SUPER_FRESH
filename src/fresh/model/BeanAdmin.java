@@ -7,7 +7,7 @@ public class BeanAdmin {
 	private String admin_pwd;
 	private String admin_state;
 	
-	private static BeanAdmin currentloginAamin = null;
+	public static BeanAdmin currentloginAamin = null;
 	
 	public String getAdmin_num() {
 		return admin_num;
