@@ -310,4 +310,43 @@ public class UserManager {
 		}
 		return result;
 	}
+	
+	public BeanUser loadbyUser_num(int User_num) throws Exception {
+		if("".equals(User_num)) throw new Exception("用户编号不能为空");
+		BeanUser bu = new BeanUser();
+		Connection conn = null;
+		try {
+			conn = DBUtil.getConnection();
+			String sql="SELECT *\r\n" + 
+					"FROM USER\r\n" + 
+					"WHERE user_num=?";
+			java.sql.PreparedStatement pst = conn.prepareStatement(sql);
+			pst.setInt(1, User_num);
+			java.sql.ResultSet rs = pst.executeQuery();
+			if(!rs.next())throw new Exception("不存在此用户");
+			else {
+				bu.setUser_num(rs.getInt(1));
+				bu.setUser_name(rs.getString(2));
+				bu.setUser_sex(rs.getString(3));
+				bu.setUser_pwd(rs.getString(4));
+				bu.setUser_Pnum(rs.getString(5));
+				bu.setUser_email(rs.getString(6));
+				bu.setUser_city(rs.getString(7));
+				bu.setUser_reg_date(rs.getTimestamp(8));
+				bu.setUser_vip(rs.getInt(9));
+				bu.setVip_ddl(rs.getTimestamp(10));
+				bu.setUser_state(rs.getString(11));
+			}
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}finally{
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO 自动生成的 catch 块
+				e.printStackTrace();
+			}
+		}
+		return bu;
+	}
 }

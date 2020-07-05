@@ -224,7 +224,7 @@ public class AdminManager {
 		return ba;
 	}
 	
-	public List<BeanAdmin> loadbynum() throws Exception {
+	public List<BeanAdmin> loadALL() throws Exception {
 		List<BeanAdmin> result = new ArrayList<BeanAdmin>();
 		Connection conn = null;
 		try {
