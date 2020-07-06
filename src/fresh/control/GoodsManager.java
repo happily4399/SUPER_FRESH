@@ -338,6 +338,34 @@ public class GoodsManager {
 		}
 	}
 	
+	public void SubGoods_count(int goods_num,int Sub_count) throws Exception {
+		if("".equals(String.valueOf(goods_num))) throw new Exception("商品编号不可为空");
+		BeanGoods bg = new BeanGoods();
+		GoodsManager gm = new GoodsManager();
+		bg = gm.loadbyGoodsnum(goods_num);
+		if(Sub_count > bg.getGoods_count()) throw new Exception("减去的数量大于商品数量");
+		Connection conn = null;
+		try {
+			conn = DBUtil.getConnection();
+			String sql = "UPDATE goods\r\n" + 
+					"SET goods_count=goods_count-?\r\n" + 
+					"WHERE goods_num=?";
+			java.sql.PreparedStatement pst = conn.prepareStatement(sql);
+			pst.setInt(1, Sub_count);
+			pst.setInt(2, goods_num);
+			pst.execute();
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}finally{
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO 自动生成的 catch 块
+				e.printStackTrace();
+			}
+		}
+	}
+	
 	public void ReduceGoods_count(int goods_num,int Reduce_count) throws Exception {
 		if("".equals(String.valueOf(goods_num))) throw new Exception("商品编号不可为空");
 		Connection conn = null;

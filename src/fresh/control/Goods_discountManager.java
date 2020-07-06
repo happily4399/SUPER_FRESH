@@ -14,7 +14,8 @@ import fresh.util.DBUtil;
 public class Goods_discountManager {
 	
 	public static void main(String[] args) throws Exception {
-		
+		Goods_discountManager gdm = new Goods_discountManager();
+		gdm.add(2, 4, "2020-07-05", "2020-07-07");
 	}
 	
 	public List<BeanGoods_discount> LoadByGoods_num(int Goods_num) throws Exception {
@@ -99,7 +100,8 @@ public class Goods_discountManager {
 			pst.setInt(1, Goods_num);
 			pst.setInt(2, Dis_num);
 			java.sql.ResultSet rs = pst.executeQuery();
-			while(rs.next()) {
+			if(!rs.next()) throw new Exception("不存在此满折商品组合");
+			else{
 				bgd.setGoods_num(rs.getInt(1));
 				bgd.setDis_num(rs.getInt(2));
 				bgd.setStart_Date(rs.getTimestamp(3));

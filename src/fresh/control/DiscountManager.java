@@ -14,7 +14,7 @@ import fresh.util.DBUtil;
 public class DiscountManager {
 	public static void main(String[] args) throws Exception {
 		DiscountManager dm = new DiscountManager();
-		dm.Add("周年大折扣", 20, (float) 0.5, "2020-07-09", "2020-07-11");
+		dm.Add("-1周年大折扣", 20, (float) 0.5, "2020-07-04", "2020-07-11");
 	}
 	
 	public void Add(String Dis_content,int Dis_count,
