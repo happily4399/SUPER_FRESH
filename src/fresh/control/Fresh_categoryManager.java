@@ -15,8 +15,8 @@ public class Fresh_categoryManager {
 	}
 	
 	public void add(String name,String des) throws Exception {
-		if(name==null) throw new Exception("类别名称不能为空");
-		if(des==null) throw new Exception("类别描述不能为空") ;
+		if("".equals(name)) throw new Exception("类别名称不能为空");
+		if("".equals(des)) throw new Exception("类别描述不能为空");
 		Connection conn = null;
 		try {
 			conn = DBUtil.getConnection();
