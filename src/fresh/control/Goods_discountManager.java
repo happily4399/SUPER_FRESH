@@ -13,6 +13,10 @@ import fresh.util.DBUtil;
 
 public class Goods_discountManager {
 	
+	public static void main(String[] args) throws Exception {
+		
+	}
+	
 	public List<BeanGoods_discount> LoadByGoods_num(int Goods_num) throws Exception {
 		List<BeanGoods_discount> result = new ArrayList<BeanGoods_discount>();
 		if("".equals(String.valueOf(Goods_num))) throw new Exception("商品编号不能为空");
@@ -29,8 +33,8 @@ public class Goods_discountManager {
 				BeanGoods_discount bgd = new BeanGoods_discount();
 				bgd.setGoods_num(rs.getInt(1));
 				bgd.setDis_num(rs.getInt(2));
-				bgd.setStart_Date(rs.getTime(3));
-				bgd.setEnd_Date(rs.getTime(4));
+				bgd.setStart_Date(rs.getTimestamp(3));
+				bgd.setEnd_Date(rs.getTimestamp(4));
 				result.add(bgd);
 			}
 			if(result.get(1)==null) throw new Exception("此商品编号无打折活动记录");
@@ -63,8 +67,8 @@ public class Goods_discountManager {
 				BeanGoods_discount bgd = new BeanGoods_discount();
 				bgd.setGoods_num(rs.getInt(1));
 				bgd.setDis_num(rs.getInt(2));
-				bgd.setStart_Date(rs.getTime(3));
-				bgd.setEnd_Date(rs.getTime(4));
+				bgd.setStart_Date(rs.getTimestamp(3));
+				bgd.setEnd_Date(rs.getTimestamp(4));
 				result.add(bgd);
 			}
 			if(result.get(1)==null) throw new Exception("此满折编号无活动记录");
@@ -90,7 +94,7 @@ public class Goods_discountManager {
 			conn = DBUtil.getConnection();
 			String sql = "SELECT *\r\n" + 
 					"FROM goods_discount\r\n" + 
-					"WHERE Goods_num=?and Dis_num=?";
+					"WHERE Goods_num= ? and Dis_num = ?";
 			java.sql.PreparedStatement pst = conn.prepareStatement(sql);
 			pst.setInt(1, Goods_num);
 			pst.setInt(2, Dis_num);
@@ -98,8 +102,8 @@ public class Goods_discountManager {
 			while(rs.next()) {
 				bgd.setGoods_num(rs.getInt(1));
 				bgd.setDis_num(rs.getInt(2));
-				bgd.setStart_Date(rs.getTime(3));
-				bgd.setEnd_Date(rs.getTime(4));
+				bgd.setStart_Date(rs.getTimestamp(3));
+				bgd.setEnd_Date(rs.getTimestamp(4));
 			}
 		}catch (SQLException e) {
 			e.printStackTrace();

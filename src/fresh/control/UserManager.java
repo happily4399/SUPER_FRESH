@@ -90,7 +90,7 @@ public class UserManager {
 			if(!(rs.next())) throw new Exception("手机号未注册");
 			else {
 				if(!user_pwd.equals(rs.getString(4))) throw new Exception("用户密码不匹配");
-				else if("注销".equals(rs.getString(9))) throw new Exception("员工已注销");
+				else if("注销".equals(rs.getString(9))) throw new Exception("用户已注销");
 				else {
 					bu.setUser_num(rs.getInt(1));
 					bu.setUser_name(rs.getString(2));

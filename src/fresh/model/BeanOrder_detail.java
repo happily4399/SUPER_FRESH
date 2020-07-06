@@ -5,8 +5,8 @@ public class BeanOrder_detail {
 	private int Dis_num;
 	private int goods_num;
 	private int order_count;
-	private int order_price;
-	private int order_dis;
+	private float order_price;
+	private float order_dis;
 	public int getOrder_num() {
 		return order_num;
 	}
@@ -31,16 +31,16 @@ public class BeanOrder_detail {
 	public void setOrder_count(int order_count) {
 		this.order_count = order_count;
 	}
-	public int getOrder_price() {
+	public float getOrder_price() {
 		return order_price;
 	}
-	public void setOrder_price(int order_price) {
+	public void setOrder_price(float order_price) {
 		this.order_price = order_price;
 	}
-	public int getOrder_dis() {
+	public float getOrder_dis() {
 		return order_dis;
 	}
-	public void setOrder_dis(int order_dis) {
+	public void setOrder_dis(float order_dis) {
 		this.order_dis = order_dis;
 	}
 	
