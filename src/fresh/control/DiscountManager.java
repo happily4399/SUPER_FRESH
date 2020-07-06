@@ -12,6 +12,11 @@ import fresh.model.BeanDiscount_infor;
 import fresh.util.DBUtil;
 
 public class DiscountManager {
+	public static void main(String[] args) throws Exception {
+		DiscountManager dm = new DiscountManager();
+		dm.Add("十周年大折扣", 20, (float) 0.5, "2030-07-01", "2030-07-05");
+	}
+	
 	public void Add(String Dis_content,int Dis_count,
 			float discount,String Dis_start_date,String Dis_end_date) throws Exception {
 		if("".equals(Dis_content)) throw new Exception("满折内容不能为空");
@@ -29,7 +34,7 @@ public class DiscountManager {
 		try {
 			conn = DBUtil.getConnection();
 			String sql = "INSERT\r\n" + 
-					"INTO discount_infor(dis_content,dis_count,discount,Dis_start_date.Dis_end_date)\r\n" + 
+					"INTO discount_infor(dis_content,dis_count,discount,Dis_start_date,Dis_end_date)\r\n" + 
 					"VALUES(?,?,?,?,?)";
 			java.sql.PreparedStatement pst = conn.prepareStatement(sql);
 			pst.setString(1, Dis_content);
@@ -68,8 +73,8 @@ public class DiscountManager {
 				bdi.setDis_content(rs.getString(2));
 				bdi.setDis_count(rs.getInt(3));
 				bdi.setDicount(rs.getFloat(4));
-				bdi.setDis_start_date(rs.getTime(5));
-				bdi.setDis_end_date(rs.getTime(6));
+				bdi.setDis_start_date(rs.getDate(5));
+				bdi.setDis_end_date(rs.getDate(6));
 			}
 		}catch (SQLException e) {
 			e.printStackTrace();
