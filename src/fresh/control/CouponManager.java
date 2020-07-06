@@ -34,8 +34,8 @@ public class CouponManager {
 				bc.setCoupon_con(rs.getString(2));
 				bc.setApp_amount(rs.getFloat(3));
 				bc.setDed_amount(rs.getFloat(4));
-				bc.setCoupon_start_date(rs.getTime(5));
-				bc.setCoupon_end_date(rs.getTime(6));
+				bc.setCoupon_start_date(rs.getTimestamp(5));
+				bc.setCoupon_end_date(rs.getTimestamp(6));
 			}
 		}catch (SQLException e) {
 			e.printStackTrace();

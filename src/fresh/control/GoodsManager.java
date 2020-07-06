@@ -230,6 +230,44 @@ public class GoodsManager {
 		return price;
 	}
 	
+	public List<BeanGoods> LoadBycate (int Fresh_num) throws Exception {
+		List<BeanGoods> result = new ArrayList<BeanGoods>();
+		Connection conn = null;
+		try {
+			conn = DBUtil.getConnection();
+			String sql = "SELECT *\r\n" + 
+					"FROM goods\r\n" + 
+					"WHERE Category_number = ?";
+			java.sql.PreparedStatement pst = conn.prepareStatement(sql);
+			pst.setInt(1, Fresh_num);
+			java.sql.ResultSet rs = pst.executeQuery();
+			while(rs.next()) {
+				BeanGoods bg = new BeanGoods();
+				bg.setGoods_num(rs.getInt(1));
+				bg.setCate_gory_number(rs.getInt(2));
+				bg.setPro_num(rs.getInt(3));
+				bg.setGoods_name(rs.getString(4));
+				bg.setGoods_price(rs.getFloat(5));
+				bg.setVip_price(rs.getFloat(6));
+				bg.setGoods_count(rs.getInt(7));
+				bg.setGoods_spe(rs.getString(8));
+				bg.setGoods_det(rs.getString(9));
+				result.add(bg);
+			}
+			pst.close();
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}finally{
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO 自动生成的 catch 块
+				e.printStackTrace();
+			}
+		}
+		return result;
+	}
+	
 	public List<BeanGoods> Loadall () throws Exception {
 		List<BeanGoods> result = new ArrayList<BeanGoods>();
 		Connection conn = null;
@@ -352,30 +390,6 @@ public class GoodsManager {
 					"WHERE goods_num=?";
 			java.sql.PreparedStatement pst = conn.prepareStatement(sql);
 			pst.setInt(1, Sub_count);
-			pst.setInt(2, goods_num);
-			pst.execute();
-		}catch (SQLException e) {
-			e.printStackTrace();
-		}finally{
-			try {
-				conn.close();
-			} catch (SQLException e) {
-				// TODO 自动生成的 catch 块
-				e.printStackTrace();
-			}
-		}
-	}
-	
-	public void ReduceGoods_count(int goods_num,int Reduce_count) throws Exception {
-		if("".equals(String.valueOf(goods_num))) throw new Exception("商品编号不可为空");
-		Connection conn = null;
-		try {
-			conn = DBUtil.getConnection();
-			String sql = "UPDATE goods\r\n" + 
-					"SET goods_count=goods_count-?\r\n" + 
-					"WHERE goods_num=?";
-			java.sql.PreparedStatement pst = conn.prepareStatement(sql);
-			pst.setInt(1, Reduce_count);
 			pst.setInt(2, goods_num);
 			pst.execute();
 		}catch (SQLException e) {

@@ -86,7 +86,7 @@ public class PromotionManager {
 		}
 	}
 	
-	public BeanPromotion LoadByNum(int pro_num) throws Exception {
+	public BeanPromotion LoadByPro_Num(int pro_num) throws Exception {
 		if("".equals(String.valueOf(pro_num))) throw new Exception("促销编号不可为空");
 		BeanPromotion bp = new BeanPromotion();
 		Connection conn = null;
@@ -106,6 +106,43 @@ public class PromotionManager {
 				bp.setPro_count(rs.getInt(4));
 				bp.setPro_start_date(rs.getDate(5));
 				bp.setPro_end_date(rs.getDate(6));
+			}
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}finally{
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO 自动生成的 catch 块
+				e.printStackTrace();
+			}
+		}
+		return bp;
+	}
+	
+	public BeanPromotion LoadByGoods_num(int Goods_num) throws Exception {
+		if("".equals(String.valueOf(Goods_num))) throw new Exception("商品编号不可为空");
+		BeanPromotion bp = new BeanPromotion();
+		Connection conn = null;
+		java.util.Date today = new Date();
+		try {
+			conn = DBUtil.getConnection();
+			String sql = "Select *\r\n" + 
+					"from promotion\r\n" + 
+					"where Goods_num = ?";
+			java.sql.PreparedStatement pst = conn.prepareStatement(sql);
+			pst.setInt(1, Goods_num);
+			java.sql.ResultSet rs = pst.executeQuery();
+			while(rs.next()) {
+				if(rs.getDate(5).getTime() < today.getTime() && rs.getDate(6).getTime() > today.getTime())
+				{
+					bp.setPro_num(rs.getInt(1));
+					bp.setGoods_num(rs.getInt(2));
+					bp.setPro_price(rs.getFloat(3));
+					bp.setPro_count(rs.getInt(4));
+					bp.setPro_start_date(rs.getDate(5));
+					bp.setPro_end_date(rs.getDate(6));
+				}
 			}
 		}catch (SQLException e) {
 			e.printStackTrace();

@@ -3,18 +3,18 @@ package fresh.model;
 import java.io.File;
 
 public class BeanGoods_evaluation {
-	private int goods_num;
+	private int Order_num;
 	private int User_num;
 	private String eva_con;
 	private java.util.Date eva_date;
 	private int star;
 	private File photo;
 	
-	public int getGoods_num() {
-		return goods_num;
+	public int getOrder_num() {
+		return Order_num;
 	}
-	public void setGoods_num(int goods_num) {
-		this.goods_num = goods_num;
+	public void setOrder_num(int Order_num) {
+		this.Order_num = Order_num;
 	}
 	public int getUser_num() {
 		return User_num;

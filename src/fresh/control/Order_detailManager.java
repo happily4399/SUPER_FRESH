@@ -16,9 +16,9 @@ public class Order_detailManager {
 	public static void main(String[] args) throws Exception {
 	}
 	
-	public BeanOrder_detail loadbyOrder_num(int Order_num) throws Exception {
+	public List<BeanOrder_detail> loadbyOrder_num(int Order_num) throws Exception {
+		List<BeanOrder_detail> result = new ArrayList<BeanOrder_detail>();
 		if("".equals(String.valueOf(Order_num))) throw new Exception("订单编号不可为空");
-		BeanOrder_detail  bod = new BeanOrder_detail();
 		Connection conn = null;
 		try {
 			conn = DBUtil.getConnection();
@@ -28,14 +28,15 @@ public class Order_detailManager {
 			java.sql.PreparedStatement pst = conn.prepareStatement(sql);
 			pst.setInt(1, Order_num);
 			java.sql.ResultSet rs = pst.executeQuery();
-			if(!rs.next()) throw new Exception("此订单不存在");
-			else {
+			while(rs.next()) {
+				BeanOrder_detail  bod = new BeanOrder_detail();
 				bod.setOrder_num(rs.getInt(1));
 				bod.setDis_num(rs.getInt(2));
 				bod.setGoods_num(rs.getInt(3));
 				bod.setOrder_count(rs.getInt(4));
 				bod.setOrder_price(rs.getFloat(5));
 				bod.setOrder_dis(rs.getFloat(6));
+				result.add(bod);
 			}
 		}catch (SQLException e) {
 			e.printStackTrace();
@@ -47,7 +48,7 @@ public class Order_detailManager {
 				e.printStackTrace();
 			}
 		}
-		return bod;
+		return result;
 	}
 	
 	public List<BeanOrder_detail> loadbyGoods_num(int Goods_num) throws Exception {
@@ -152,11 +153,13 @@ public class Order_detailManager {
 		return result;
 	}
 	
-	public void reloadPrice_count(BeanOrder_detail bod) throws Exception {
+	public float reloadPrice_count(BeanOrder_detail bod) throws Exception {
 		if(bod==null) throw new Exception("订单不存在");
 		float ori_price=0;
-		float fin_price=0;
+		float sum_price=0;
+		float pro_price=0;
 		float count = 0;
+		int pro_count = 0;
 		
 		java.util.Date today = new Date();
 		
@@ -164,7 +167,13 @@ public class Order_detailManager {
 		GoodsManager gm = new GoodsManager();
 		bg = gm.loadbyGoodsnum(bod.getGoods_num());
 		ori_price = bg.getGoods_price();
-		fin_price = ori_price;
+		
+		PromotionManager pm = new PromotionManager();
+		if(!(pm.LoadByGoods_num(bod.getGoods_num())==null)) {
+			pro_price = pm.LoadByGoods_num(bod.getGoods_num()).getPro_price();
+			pro_count = pm.LoadByGoods_num(bod.getGoods_num()).getPro_count();
+		}
+		sum_price = pro_price * pro_count + ori_price * (bod.getOrder_count() - pro_count);
 		
 		BeanDiscount_infor bdi = new BeanDiscount_infor();
 		DiscountManager dm = new DiscountManager();
@@ -173,12 +182,13 @@ public class Order_detailManager {
 		BeanGoods_discount bgd = new BeanGoods_discount();
 		Goods_discountManager bdm = new Goods_discountManager();
 		bgd = bdm.LoadByGoods_Dis_num(bod.getGoods_num(), bod.getDis_num());
-		
 		if(bgd.getStart_Date().getTime() > today.getTime()) throw new Exception("此商品满折优惠未到开始时间，无法使用");
 		if(bgd.getEnd_Date().getTime() < today.getTime()) throw new Exception("此商品满折优惠已过期，无法使用");
  		
+		
+		
 		if(bod.getOrder_count()>=bdi.getDis_count()) {
-			fin_price = ori_price * bdi.getDicount();
+			sum_price = sum_price * bdi.getDicount();
 			count = bdi.getDicount();
 		}
 		
@@ -190,7 +200,7 @@ public class Order_detailManager {
 					"SET order_price=?,order_dis=?\r\n" + 
 					"WHERE order_num=?";
 			java.sql.PreparedStatement pst = conn.prepareStatement(sql);
-			pst.setFloat(1, fin_price);
+			pst.setFloat(1, sum_price);
 			pst.setFloat(2, count);
 			pst.setInt(3, bod.getOrder_num());
 			pst.execute();
@@ -204,11 +214,11 @@ public class Order_detailManager {
 				e.printStackTrace();
 			}
 		}
+		return sum_price;
 	}
 	
 	public void Add(int Order_num,int Dis_num,int Goods_num,int order_count) throws Exception {
 		if("".equals(String.valueOf(Order_num))) throw new Exception("订单编号不可为空");
-		if("".equals(String.valueOf(Dis_num))) throw new Exception("满折编号不可为空");
 		if("".equals(String.valueOf(Goods_num))) throw new Exception("商品编号不可为空");
 		if("".equals(String.valueOf(order_count))) throw new Exception("商品数量不可为空");
 		if(order_count <= 0) throw new Exception("商品数量不得为0或为负数");
@@ -217,19 +227,22 @@ public class Order_detailManager {
 		bg = gm.loadbyGoodsnum(Goods_num);
 		if(order_count > bg.getGoods_count()) throw new Exception("商品库存不足，请重新输入购买数量");
 		
-		BeanDiscount_infor bdi = new BeanDiscount_infor();
-		DiscountManager dm = new DiscountManager();
-		bdi = dm.loadbyNum(Dis_num);
-		
-		BeanGoods_discount bgd = new BeanGoods_discount();
-		Goods_discountManager bdm = new Goods_discountManager();
-		bgd = bdm.LoadByGoods_Dis_num(Goods_num, Dis_num);
-		
+		if(!"".equals(String.valueOf(Dis_num))) {
+			BeanDiscount_infor bdi = new BeanDiscount_infor();
+			DiscountManager dm = new DiscountManager();
+			bdi = dm.loadbyNum(Dis_num);
+			
+			BeanGoods_discount bgd = new BeanGoods_discount();
+			Goods_discountManager bdm = new Goods_discountManager();
+			bgd = bdm.LoadByGoods_Dis_num(Goods_num, Dis_num);
+		}
+
 		BeanOrder_detail bod = new BeanOrder_detail();
 		bod.setOrder_num(Order_num);
 		bod.setDis_num(Dis_num);
 		bod.setGoods_num(Goods_num);
 		bod.setOrder_count(order_count);
+		
 		
 		Connection conn = null;
 		try {
@@ -244,7 +257,9 @@ public class Order_detailManager {
 			pst.setInt(4, order_count);
 			pst.execute();
 			Order_detailManager odm = new Order_detailManager();
+			System.out.println(bod.getGoods_num());
 			odm.reloadPrice_count(bod);
+			
 			gm.SubGoods_count(Goods_num, order_count);
 		}catch (SQLException e) {
 			e.printStackTrace();
