@@ -31,12 +31,6 @@ public class FrmLogin extends JDialog implements ActionListener{
 	private JRadioButton choice1 = new JRadioButton("用户");
 	private JRadioButton choice2 = new JRadioButton("管理员");
 	
-	public static void main(String []args) {
-		JFrame jf=new JFrame(); 
-		FrmLogin fl = new FrmLogin(jf,"欢迎使用购物系统",true);
-		fl.setVisible(true);
-	}
-	
 	public FrmLogin(Frame f,String s,boolean b) {
 		super(f,s,b);
 		panelname.add(Labelname);
@@ -99,7 +93,7 @@ public class FrmLogin extends JDialog implements ActionListener{
 		}else if(e.getSource()==this.Butreg) {
 			try {
 				FrmUserRegister fur = new FrmUserRegister(this,"用户注册",true);
-				this.setVisible(false);
+				this.setVisible(true);
 			}catch(Exception e1) {
 				JOptionPane.showMessageDialog(null, e1.getMessage(), "错误",JOptionPane.ERROR_MESSAGE);
 				return;
@@ -107,7 +101,7 @@ public class FrmLogin extends JDialog implements ActionListener{
 		}else if(e.getSource()==this.Butadminreg) {
 			try {
 				FrmRegister fr = new FrmRegister(this,"管理员注册",true);
-				this.setVisible(false);
+				this.setVisible(true);
 			}catch(Exception e1) {
 				JOptionPane.showMessageDialog(null, e1.getMessage(), "错误",JOptionPane.ERROR_MESSAGE);
 				return;

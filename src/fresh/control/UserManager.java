@@ -160,6 +160,135 @@ public class UserManager {
 		}
 	}
 	
+	
+	public void Changsex(String user_Pnum,String sex) throws Exception {
+		if("".equals(sex)) return;
+		Connection conn=null;
+		try {
+			conn=DBUtil.getConnection();
+			conn.setAutoCommit(false);
+			String sql="UPDATE user\r\n" + 
+					"set user_sex=?\r\n" + 
+					"where user_Pnum=?";
+			java.sql.PreparedStatement pst=conn.prepareStatement(sql);
+			pst.setString(1, sex);
+			pst.setString(2, user_Pnum);
+			pst.execute();
+			pst.close();
+			conn.commit();
+		}catch (SQLException e) {
+			e.printStackTrace();
+			try {
+				conn.rollback();
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+		}finally{
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO 自动生成的 catch 块
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public void ChangCity(String user_Pnum,String User_city) throws Exception {
+		if("".equals(User_city)) return;
+		Connection conn=null;
+		try {
+			conn=DBUtil.getConnection();
+			conn.setAutoCommit(false);
+			String sql="UPDATE user\r\n" + 
+					"set user_city=?\r\n" + 
+					"where user_Pnum=?";
+			java.sql.PreparedStatement pst=conn.prepareStatement(sql);
+			pst.setString(1, User_city);
+			pst.setString(2, user_Pnum);
+			pst.execute();
+			pst.close();
+			conn.commit();
+		}catch (SQLException e) {
+			e.printStackTrace();
+			try {
+				conn.rollback();
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+		}finally{
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO 自动生成的 catch 块
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public void ChangName(String user_Pnum,String User_name) throws Exception {
+		if("".equals(User_name)) return;
+		Connection conn=null;
+		try {
+			conn=DBUtil.getConnection();
+			conn.setAutoCommit(false);
+			String sql="UPDATE user\r\n" + 
+					"set user_name=?\r\n" + 
+					"where user_Pnum=?";
+			java.sql.PreparedStatement pst=conn.prepareStatement(sql);
+			pst.setString(1, User_name);
+			pst.setString(2, user_Pnum);
+			pst.execute();
+			pst.close();
+			conn.commit();
+		}catch (SQLException e) {
+			e.printStackTrace();
+			try {
+				conn.rollback();
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+		}finally{
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO 自动生成的 catch 块
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public void Changemail(String user_Pnum,String User_email) throws Exception {
+		if("".equals(User_email)) return;
+		Connection conn=null;
+		try {
+			conn=DBUtil.getConnection();
+			conn.setAutoCommit(false);
+			String sql="UPDATE user\r\n" + 
+					"set user_email=?\r\n" + 
+					"where user_Pnum=?";
+			java.sql.PreparedStatement pst=conn.prepareStatement(sql);
+			pst.setString(1, User_email);
+			pst.setString(2, user_Pnum);
+			pst.execute();
+			pst.close();
+			conn.commit();
+		}catch (SQLException e) {
+			e.printStackTrace();
+			try {
+				conn.rollback();
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+		}finally{
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO 自动生成的 catch 块
+				e.printStackTrace();
+			}
+		}
+	}
+	
 	public void cancell(String user_Pnum) {
 		Connection conn=null;
 		try {
