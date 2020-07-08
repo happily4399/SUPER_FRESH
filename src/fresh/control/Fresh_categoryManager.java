@@ -9,11 +9,6 @@ import fresh.model.BeanFresh_category;
 import fresh.util.DBUtil;
 
 public class Fresh_categoryManager {
-	public static void main(String[] args) throws Exception {
-		Fresh_categoryManager fc = new Fresh_categoryManager();
-		fc.changename(1, "樱桃");
-	}
-	
 	public void add(String name,String des) throws Exception {
 		if("".equals(name)) throw new Exception("类别名称不能为空");
 		if("".equals(des)) throw new Exception("类别描述不能为空");
@@ -193,6 +188,38 @@ public class Fresh_categoryManager {
 			}
 			rs.close();
 			pst.close();
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}finally{
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO 自动生成的 catch 块
+				e.printStackTrace();
+			}
+		}
+		return result;
+	}
+	
+	public List<BeanFresh_category> loadbyname(String Fresh_name) throws Exception {
+		List<BeanFresh_category> result = new ArrayList<BeanFresh_category>();
+		Connection conn = null;
+		try {
+			conn = DBUtil.getConnection();
+			String sql="SELECT *\r\n" + 
+					"FROM fresh_category\r\n" + 
+					"WHERE Category_name like '%"+Fresh_name+"%'";
+			java.sql.Statement st = conn.createStatement();
+			java.sql.ResultSet rs = st.executeQuery(sql);
+			while(rs.next()) {
+				BeanFresh_category bf = new BeanFresh_category();
+				bf.setCategory_number(rs.getInt(1));
+				bf.setCategory_name(rs.getString(2));
+				bf.setCategory_des(rs.getString(3));
+				result.add(bf);
+			}
+			rs.close();
+			st.close();
 		}catch (SQLException e) {
 			e.printStackTrace();
 		}finally{

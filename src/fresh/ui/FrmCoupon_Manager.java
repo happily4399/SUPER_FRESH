@@ -141,6 +141,30 @@ public class FrmCoupon_Manager extends JDialog implements ActionListener{
 				
 			}
 		}
+		
+		else if(e.getSource()==this.btnAdd) {
+			FrmCoupon_add fca = new FrmCoupon_add(this,"优惠券添加界面",true);
+			fca.setVisible(false);
+		}
+		
+		else if(e.getSource()==this.btnChange) {
+			int i = this.CouponTable.getSelectedRow();
+			if(i<0) {
+				JOptionPane.showMessageDialog(null,  "请选择账号","提示",JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			if(JOptionPane.showConfirmDialog(this,"确定更改此账号信息吗？","确认",JOptionPane.YES_NO_OPTION)==JOptionPane.YES_OPTION){
+				String Cn=this.tblData[i][0].toString();
+				int Coupon_num=Integer.parseInt(Cn);
+				try {
+					FrmCoupon_Change fcc = new FrmCoupon_Change(this,"修改优惠券信息",true,Coupon_num);
+					this.reloadCouponTable();
+				} catch (Exception e1) {
+					JOptionPane.showMessageDialog(null, e1.getMessage(),"错误",JOptionPane.ERROR_MESSAGE);
+				}
+				
+			}
+			this.reloadCouponTable();
+		}
 	}
-	
 }

@@ -7,6 +7,8 @@ import java.awt.Frame;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
@@ -21,7 +23,9 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
+import fresh.control.Goods_orderManager;
 import fresh.control.UserManager;
+import fresh.model.BeanGoods_order;
 import fresh.model.BeanUser;
 
 public class FrmUserManager extends JDialog implements ActionListener{
@@ -30,13 +34,19 @@ public class FrmUserManager extends JDialog implements ActionListener{
 	private Button btnChange = new Button("修改用户信息");
 	private Button btnAdd = new Button("增加用户");
 	private Button btnDelete = new Button("删除用户");
+	private Button btnSearch = new Button("查询");
+	
 	private JTextField edtKeyword = new JTextField(10);
 	private JLabel Labelname = new JLabel("根据用户名查询：");
-	private Button btnSearch = new Button("查询");
+	
+	private Object tblGoods_orderTitle[]= {"订单编号","地址编号","优惠券编号","原始金额","结算金额","要求送达时间","订单状态"};
 	private Object tblTitle[]={"用户编号","姓名","性别","密码","手机号","邮箱","城市","注册日期","用户状态","是否会员","会员到期时间"};
 	private Object tblData[][];
+	private Object tblGoods_orderData[][];
 	DefaultTableModel tablmod=new DefaultTableModel();
 	private JTable userTable=new JTable(tablmod);
+	DefaultTableModel tablmod_goods=new DefaultTableModel();
+	private JTable Goods_OrdersTable=new JTable(tablmod_goods);
 	private void reloadUserTable(){
 		try {
 			UserManager um = new UserManager();
@@ -58,6 +68,32 @@ public class FrmUserManager extends JDialog implements ActionListener{
 			tablmod.setDataVector(tblData,tblTitle);
 			this.userTable.validate();
 			this.userTable.repaint();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	private void reloadGoods_OrderTable(int User_cow){
+		try {
+			UserManager um = new UserManager();
+			List<BeanUser> users= um.loadall();
+			int User_num=users.get(User_cow).getUser_num();
+			Goods_orderManager gom = new Goods_orderManager();
+			List<BeanGoods_order> bgo= gom.LoadbyUser_num(User_num);
+			tblGoods_orderData =new Object[bgo.size()][8];
+			for(int i=0;i<bgo.size();i++){
+				tblGoods_orderData[i][0]=bgo.get(i).getOrder_num();
+				tblGoods_orderData[i][1]=bgo.get(i).getShip_num();
+				tblGoods_orderData[i][2]=bgo.get(i).getCoupon_num();
+				tblGoods_orderData[i][3]=bgo.get(i).getOri_price();
+				tblGoods_orderData[i][4]=bgo.get(i).getFin_price();
+				tblGoods_orderData[i][5]=bgo.get(i).getService_time();
+				tblGoods_orderData[i][6]=bgo.get(i).getOrder_state();
+			}
+			tablmod_goods.setDataVector(tblGoods_orderData,tblGoods_orderTitle);
+			this.Goods_OrdersTable.validate();
+			this.Goods_OrdersTable.repaint();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -104,9 +140,8 @@ public class FrmUserManager extends JDialog implements ActionListener{
 		//提取现有数据
 		this.reloadUserTable();
 		this.getContentPane().add(new JScrollPane(this.userTable), BorderLayout.CENTER);
-		
 		// 屏幕居中显示
-		this.setSize(1000, 600);
+		this.setSize(1500, 600);
 		double width = Toolkit.getDefaultToolkit().getScreenSize().getWidth();
 		double height = Toolkit.getDefaultToolkit().getScreenSize().getHeight();
 		this.setLocation((int) (width - this.getWidth()) / 2,

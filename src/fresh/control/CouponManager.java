@@ -17,7 +17,7 @@ public class CouponManager {
 	}
 	
 	public BeanCoupon loadByCoupon_num(int Coupon_num) throws Exception {
-		if("".equals(Coupon_num)) throw new Exception("优惠券编号不能为空");
+		if("".equals(String.valueOf(Coupon_num))) throw new Exception("优惠券编号不能为空");
 		BeanCoupon bc = new BeanCoupon();
 		Connection conn = null;
 		try {
@@ -118,8 +118,8 @@ public class CouponManager {
 	public void add(String Coupon_con,float app_amount,float Ded_amount,
 			String Coupon_start_date,String Coupon_end_date ) throws Exception {
 		if("".equals(Coupon_con)) throw new Exception("优惠券内容不能为空");
-		if("".equals(app_amount)) throw new Exception("适用金额不能为空");
-		if("".equals(Ded_amount)) throw new Exception("减免金额不能为空");
+		if("".equals(String.valueOf(app_amount))) throw new Exception("优惠券编号不能为空");
+		if("".equals(String.valueOf(Ded_amount))) throw new Exception("优惠券编号不能为空");
 		if("".equals(Coupon_start_date)) throw new Exception("起始日期不能为空");
 		if("".equals(Coupon_end_date)) throw new Exception("结束日期不能为空");
 		SimpleDateFormat sdf2= new SimpleDateFormat("yyyy-MM-dd");
@@ -154,7 +154,7 @@ public class CouponManager {
 	}
 	
 	public void Delete(int Coupon_num) throws Exception {
-		if("".equals(Coupon_num)) throw new Exception("优惠券编号不能为空");
+		if("".equals(String.valueOf(Coupon_num))) throw new Exception("优惠券编号不能为空");
 		Goods_orderManager gom = new Goods_orderManager();
 		Connection conn = null;
 		try {
@@ -179,7 +179,7 @@ public class CouponManager {
 	}
 	
 	public void ChangeCoupon_con(int Coupon_num,String Coupon_con) throws Exception {
-		if("".equals(Coupon_num)) throw new Exception("优惠券编号不能为空");
+		if("".equals(String.valueOf(Coupon_num))) throw new Exception("优惠券编号不能为空");
 		Connection conn = null;
 		Goods_orderManager gom = new Goods_orderManager();
 		gom.LoadbyCoupon_num(Coupon_num);
@@ -206,7 +206,7 @@ public class CouponManager {
 	}
 	
 	public void ChangeCoupon_app_amount(int Coupon_num,float app_amount) throws Exception {
-		if("".equals(Coupon_num)) throw new Exception("优惠券编号不能为空");
+		if("".equals(String.valueOf(Coupon_num))) throw new Exception("优惠券编号不能为空");
 		Connection conn = null;
 		Goods_orderManager gom = new Goods_orderManager();
 		gom.LoadbyCoupon_num(Coupon_num);
@@ -233,7 +233,7 @@ public class CouponManager {
 	}
 	
 	public void ChangeCoupon_Ded_amount(int Coupon_num,float Ded_amount) throws Exception {
-		if("".equals(Coupon_num)) throw new Exception("优惠券编号不能为空");
+		if("".equals(String.valueOf(Coupon_num))) throw new Exception("优惠券编号不能为空");
 		Connection conn = null;
 		Goods_orderManager gom = new Goods_orderManager();
 		gom.LoadbyCoupon_num(Coupon_num);
@@ -260,7 +260,7 @@ public class CouponManager {
 	}
 	
 	public void ChangeCoupon_start_Date(int Coupon_num,String start_Date) throws Exception {
-		if("".equals(Coupon_num)) throw new Exception("优惠券编号不能为空");
+		if("".equals(String.valueOf(Coupon_num))) throw new Exception("优惠券编号不能为空");
 		Connection conn = null;
 		SimpleDateFormat sdf2= new SimpleDateFormat("yyyy-MM-dd");
 		java.util.Date start_date = new Date();

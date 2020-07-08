@@ -104,8 +104,7 @@ public class Goods_orderManager {
 			java.sql.PreparedStatement pst = conn.prepareStatement(sql);
 			pst.setInt(1, Ship_num);
 			java.sql.ResultSet rs = pst.executeQuery();
-			if(!(rs.next())) throw new Exception("此商品_订单记录不存在");
-			else {
+			while(rs.next()) {
 				BeanGoods_order bgo = new BeanGoods_order();
 				bgo.setOrder_num(rs.getInt(1));
 				bgo.setUser_num(rs.getInt(2));
@@ -142,8 +141,7 @@ public class Goods_orderManager {
 			java.sql.PreparedStatement pst = conn.prepareStatement(sql);
 			pst.setInt(1, User_num);
 			java.sql.ResultSet rs = pst.executeQuery();
-			if(!(rs.next())) throw new Exception("此商品_订单记录不存在");
-			else {
+			while(rs.next()){
 				BeanGoods_order bgo = new BeanGoods_order();
 				bgo.setOrder_num(rs.getInt(1));
 				bgo.setUser_num(rs.getInt(2));

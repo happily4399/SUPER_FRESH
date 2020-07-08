@@ -153,6 +153,7 @@ public class GoodsManager {
 				bg.setGoods_count(rs.getInt(6));
 				bg.setGoods_spe(rs.getString(7));
 				bg.setGoods_det(rs.getString(8));
+				bg.setSales_count(rs.getInt(9));
 			}
 			pst.close();
 		}catch (SQLException e) {
@@ -245,13 +246,12 @@ public class GoodsManager {
 				BeanGoods bg = new BeanGoods();
 				bg.setGoods_num(rs.getInt(1));
 				bg.setCate_gory_number(rs.getInt(2));
-				bg.setPro_num(rs.getInt(3));
-				bg.setGoods_name(rs.getString(4));
-				bg.setGoods_price(rs.getFloat(5));
-				bg.setVip_price(rs.getFloat(6));
-				bg.setGoods_count(rs.getInt(7));
-				bg.setGoods_spe(rs.getString(8));
-				bg.setGoods_det(rs.getString(9));
+				bg.setGoods_name(rs.getString(3));
+				bg.setGoods_price(rs.getFloat(4));
+				bg.setVip_price(rs.getFloat(5));
+				bg.setGoods_count(rs.getInt(6));
+				bg.setGoods_spe(rs.getString(7));
+				bg.setGoods_det(rs.getString(8));
 				result.add(bg);
 			}
 			pst.close();
@@ -281,13 +281,13 @@ public class GoodsManager {
 				BeanGoods bg = new BeanGoods();
 				bg.setGoods_num(rs.getInt(1));
 				bg.setCate_gory_number(rs.getInt(2));
-				bg.setPro_num(rs.getInt(3));
-				bg.setGoods_name(rs.getString(4));
-				bg.setGoods_price(rs.getFloat(5));
-				bg.setVip_price(rs.getFloat(6));
-				bg.setGoods_count(rs.getInt(7));
-				bg.setGoods_spe(rs.getString(8));
-				bg.setGoods_det(rs.getString(9));
+				bg.setGoods_name(rs.getString(3));
+				bg.setGoods_price(rs.getFloat(4));
+				bg.setVip_price(rs.getFloat(5));
+				bg.setGoods_count(rs.getInt(6));
+				bg.setGoods_spe(rs.getString(7));
+				bg.setGoods_det(rs.getString(8));
+				bg.setSales_count(rs.getInt(9));
 				result.add(bg);
 			}
 			pst.close();
@@ -352,6 +352,54 @@ public class GoodsManager {
 		}
 	}
 	
+	public void ChangeGoods_spe(int goods_num,String goods_spe) throws Exception {
+		if("".equals(String.valueOf(goods_num))) throw new Exception("商品编号不可为空");
+		Connection conn = null;
+		try {
+			conn = DBUtil.getConnection();
+			String sql = "UPDATE goods\r\n" + 
+					"SET goods_spe=?\r\n" + 
+					"WHERE goods_num=?";
+			java.sql.PreparedStatement pst = conn.prepareStatement(sql);
+			pst.setString(1, goods_spe);
+			pst.setInt(2, goods_num);
+			pst.execute();
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}finally{
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO 自动生成的 catch 块
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public void ChangeGoods_des(int goods_num,String goods_des) throws Exception {
+		if("".equals(String.valueOf(goods_num))) throw new Exception("商品编号不可为空");
+		Connection conn = null;
+		try {
+			conn = DBUtil.getConnection();
+			String sql = "UPDATE goods\r\n" + 
+					"SET goods_des=?\r\n" + 
+					"WHERE goods_num=?";
+			java.sql.PreparedStatement pst = conn.prepareStatement(sql);
+			pst.setString(1, goods_des);
+			pst.setInt(2, goods_num);
+			pst.execute();
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}finally{
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO 自动生成的 catch 块
+				e.printStackTrace();
+			}
+		}
+	}
+	
 	public void AddGoods_count(int goods_num,int Add_count) throws Exception {
 		if("".equals(String.valueOf(goods_num))) throw new Exception("商品编号不可为空");
 		Connection conn = null;
@@ -386,11 +434,12 @@ public class GoodsManager {
 		try {
 			conn = DBUtil.getConnection();
 			String sql = "UPDATE goods\r\n" + 
-					"SET goods_count=goods_count-?\r\n" + 
+					"SET goods_count=goods_count-?,sales_count=sales_count+?\r\n" + 
 					"WHERE goods_num=?";
 			java.sql.PreparedStatement pst = conn.prepareStatement(sql);
 			pst.setInt(1, Sub_count);
-			pst.setInt(2, goods_num);
+			pst.setInt(2, Sub_count);
+			pst.setInt(3, goods_num);
 			pst.execute();
 		}catch (SQLException e) {
 			e.printStackTrace();

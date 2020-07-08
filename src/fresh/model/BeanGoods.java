@@ -10,7 +10,14 @@ public class BeanGoods {
 	private int goods_count;
 	private String goods_spe;
 	private String goods_det;
+	private int sales_count;
 	
+	public int getSales_count() {
+		return sales_count;
+	}
+	public void setSales_count(int sales_count) {
+		this.sales_count = sales_count;
+	}
 	public int getCate_gory_number() {
 		return Cate_gory_number;
 	}

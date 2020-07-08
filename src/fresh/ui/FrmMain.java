@@ -11,7 +11,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 public class FrmMain extends JFrame implements ActionListener{
-	private JMenuBar menubar=new JMenuBar(); ;
+	private JMenuBar menubar=new JMenuBar();
     private JMenu menu_User=new JMenu("账户管理");
     
     private JMenuItem  menuItem_UserPasswd=new JMenuItem("修改密码");
@@ -27,7 +27,10 @@ public class FrmMain extends JFrame implements ActionListener{
     
     private JMenuItem System_User=new JMenuItem("用户管理");
     private JMenuItem System_Coupon = new JMenuItem("优惠券管理");
+    private JMenuItem System_Fresh = new JMenuItem("类别管理");
     
+    private ImageIcon image = new ImageIcon("E:\\java photo\\2003231.jpg");
+    private JLabel label = new JLabel(image);
     
 	private FrmLogin dlglogin = null;
 	private JPanel statusBar = new JPanel();
@@ -57,10 +60,16 @@ public class FrmMain extends JFrame implements ActionListener{
 			System_User.addActionListener(this);
 			menu_Admin_System.add(System_Coupon);
 			System_Coupon.addActionListener(this);
+			menu_Admin_System.add(System_Fresh);
+			System_Fresh.addActionListener(this);
 			
 			menubar.add(menu_Admin_System);
 			menubar.add(menu_Admin);
 		}
+		label.setBounds(0, 0, image.getIconWidth(), image.getIconHeight());
+		statusBar = (JPanel) this.getContentPane();
+		statusBar.add(label);
+		statusBar.setOpaque(false);
 		this.setJMenuBar(menubar);
 		this.addWindowListener(new WindowAdapter(){
 	    	public void windowClosing(WindowEvent e){ 
@@ -107,5 +116,11 @@ public class FrmMain extends JFrame implements ActionListener{
 			FrmCoupon_Manager fcm = new FrmCoupon_Manager(this,"优惠券管理界面",true);
 			fcm.setVisible(false);
 		}
+		
+		else if(e.getSource()==this.System_Fresh) {
+			FrmFresh_Manager fcm = new FrmFresh_Manager(this,"类别管理界面",true);
+			fcm.setVisible(false);
+		}
+		
 	}
 }
