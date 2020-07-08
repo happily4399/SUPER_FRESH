@@ -147,6 +147,37 @@ public class AdminManager {
 		}
 	}
 	
+	public void Changname(String admin_num,String name) throws Exception {
+		Connection conn=null;
+		try {
+			conn=DBUtil.getConnection();
+			conn.setAutoCommit(false);
+			String sql="UPDATE admin\r\n" + 
+					"set admin_name=?\r\n" + 
+					"where admin_num=?";
+			java.sql.PreparedStatement pst=conn.prepareStatement(sql);
+			pst.setString(1, name);
+			pst.setString(2, admin_num);
+			pst.execute();
+			pst.close();
+			conn.commit();
+		}catch (SQLException e) {
+			e.printStackTrace();
+			try {
+				conn.rollback();
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+		}finally{
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO 自动生成的 catch 块
+				e.printStackTrace();
+			}
+		}
+	}
+	
 	public void cancell(String admin_num) {
 		Connection conn=null;
 		try {

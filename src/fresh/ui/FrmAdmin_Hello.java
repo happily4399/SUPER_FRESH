@@ -23,6 +23,7 @@ public class FrmAdmin_Hello extends JDialog implements ActionListener{
 	private JButton ButOk = new JButton("好的，谢谢");
 	
 	public FrmAdmin_Hello(Frame f,String s,boolean b){
+		super(f,s,b);
 		JLabel Hello = new JLabel("你好，管理员"+BeanAdmin.currentloginAamin.getAdmin_name()+"今天又是活力满满的一天");
 		panelHello.add(Hello);
 		panelwork.add(ButOk);

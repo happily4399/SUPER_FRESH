@@ -163,10 +163,19 @@ public class Order_detailManager {
 		
 		java.util.Date today = new Date();
 		
+		Goods_orderManager gom = new Goods_orderManager();
 		BeanGoods bg = new BeanGoods();
+		UserManager um = new UserManager();
 		GoodsManager gm = new GoodsManager();
 		bg = gm.loadbyGoodsnum(bod.getGoods_num());
-		ori_price = bg.getGoods_price();
+		
+		//传输会员价
+		if(!("".equals(String.valueOf(um.loadbyUser_num(gom.LoadbyOrder_num(bod.getOrder_num()).getUser_num()).getVip_ddl()))
+				)&&um.loadbyUser_num(gom.LoadbyOrder_num(bod.getOrder_num()).getUser_num()).getVip_ddl().getTime() >= today.getTime())
+			ori_price = bg.getVip_price();
+		else {
+			ori_price = bg.getGoods_price();
+		}
 		
 		PromotionManager pm = new PromotionManager();
 		if(!(pm.LoadByGoods_num(bod.getGoods_num())==null)) {
@@ -276,7 +285,7 @@ public class Order_detailManager {
 	public void Delete(int Order_num) throws Exception {
 		if("".equals(String.valueOf(Order_num))) throw new Exception("订单编号不可为空");
 		Order_detailManager odm = new Order_detailManager();
-		if(!(odm.loadbyOrder_num(Order_num)==null)) throw new Exception("不存在此订单");
+		if(odm.loadbyOrder_num(Order_num).size()==0) throw new Exception("不存在此订单");
 		Connection conn = null;
 		try {
 			conn = DBUtil.getConnection();

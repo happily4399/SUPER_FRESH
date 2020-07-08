@@ -11,16 +11,11 @@ import fresh.util.DBUtil;
  
 public class UserManager {
 	
-	public static void main(String[] args) throws Exception {
-		UserManager um = new UserManager();
-		um.Changpwd("31803225", "123456", "31802323");
-	}
-	
 	public BeanUser reg(String User_name,String User_sex,String User_pwd,String User_Pnum,String User_email,String User_city) throws Exception {
+		if("".equals(User_Pnum)) throw new Exception("手机号不能为空");
 		if("".equals(User_name)) throw new Exception("用户姓名不能为空");
 		if("".equals(User_sex)) throw new Exception("用户性别不能为空");
 		if("".equals(User_pwd)) throw new Exception("用户密码不能为空");
-		if("".equals(User_Pnum)) throw new Exception("手机号不能为空");
 		if("".equals(User_email)) throw new Exception("用户邮箱不能为空");
 		if("".equals(User_city)) throw new Exception("所在城市不能为空");
 		BeanUser bu = new BeanUser();
@@ -314,23 +309,25 @@ public class UserManager {
 	
 	public void Delete(String user_Pnum) throws Exception {
 		Connection conn=null;
+		UserManager um = new UserManager();
+		int user_num = um.loadbyPnum(user_Pnum).getUser_num();
 		try {
 			conn=DBUtil.getConnection();
 			String sql="SELECT *\r\n" + 
 					"FROM shipping\r\n" + 
-					"WHERE user_Pnum=?";
+					"WHERE user_num=?";
 			java.sql.PreparedStatement pst = conn.prepareStatement(sql);
-			pst.setString(1, user_Pnum);
+			pst.setInt(1, user_num);
 			java.sql.ResultSet rs = pst.executeQuery();
-			if(rs.next()) throw new Exception("shipping表中仍存在此商品，拒绝删除");
+			if(rs.next()) throw new Exception("shipping表中仍存在此用户，拒绝删除");
 			rs.close();
 			pst.close();
 			
 			sql="SELECT *\r\n" + 
 					"FROM goods_order\r\n" + 
-					"WHERE user_Pnum=?";
+					"WHERE user_num=?";
 			pst = conn.prepareStatement(sql);
-			pst.setString(1, user_Pnum);
+			pst.setInt(1, user_num);
 			rs = pst.executeQuery();
 			if(rs.next()) throw new Exception("goods_order表中仍存在此用户信息，拒绝删除");
 			rs.close();
@@ -338,9 +335,9 @@ public class UserManager {
 			
 			sql="SELECT *\r\n" + 
 					"FROM Goods_evaluation\r\n" + 
-					"WHERE user_Pnum=?";
+					"WHERE user_num=?";
 			pst = conn.prepareStatement(sql);
-			pst.setString(1, user_Pnum);
+			pst.setInt(1, user_num);
 			rs = pst.executeQuery();
 			if(rs.next()) throw new Exception("Goods_evaluation表中仍存在此用户信息，拒绝删除");
 			rs.close();
@@ -348,9 +345,9 @@ public class UserManager {
 			
 			sql="DELETE \r\n" + 
 					"FROM user\r\n" + 
-					"WHERE user_Pnum=?";
+					"WHERE user_num=?";
 			pst=conn.prepareStatement(sql);
-			pst.setString(1, user_Pnum);
+			pst.setInt(1, user_num);
 			pst.execute();
 		}catch (SQLException e) {
 			e.printStackTrace();
@@ -477,5 +474,43 @@ public class UserManager {
 			}
 		}
 		return bu;
+	}
+	
+	public List<BeanUser> loadbyUser_name(String User_name) throws Exception {
+		List<BeanUser> result = new ArrayList<BeanUser>();
+		Connection conn = null;
+		try {
+			conn = DBUtil.getConnection();
+			String sql="SELECT *\r\n" + 
+					"FROM USER\r\n" + 
+					"WHERE user_name like '%"+User_name+"%'";
+			java.sql.Statement st = conn.createStatement();
+			java.sql.ResultSet rs = st.executeQuery(sql);
+			while(rs.next()) {
+				BeanUser bu = new BeanUser();
+				bu.setUser_num(rs.getInt(1));
+				bu.setUser_name(rs.getString(2));
+				bu.setUser_sex(rs.getString(3));
+				bu.setUser_pwd(rs.getString(4));
+				bu.setUser_Pnum(rs.getString(5));
+				bu.setUser_email(rs.getString(6));
+				bu.setUser_city(rs.getString(7));
+				bu.setUser_reg_date(rs.getTimestamp(8));
+				bu.setUser_vip(rs.getInt(9));
+				bu.setVip_ddl(rs.getTimestamp(10));
+				bu.setUser_state(rs.getString(11));
+				result.add(bu);
+			}
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}finally{
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO 自动生成的 catch 块
+				e.printStackTrace();
+			}
+		}
+		return result;
 	}
 }

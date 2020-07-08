@@ -15,9 +15,7 @@ import fresh.util.DBUtil;
 public class Goods_orderManager {
 	
 	public static void main(String[] args) throws Exception {
-		Goods_orderManager gom = new Goods_orderManager();
-		Order_detailManager odm = new Order_detailManager();
-		gom.reload_price(6, 2);
+		
 	}
 	
 	public List<BeanGoods_order> LoadbyCoupon_num(int Coupon_num) throws Exception {
@@ -33,8 +31,7 @@ public class Goods_orderManager {
 			java.sql.PreparedStatement pst = conn.prepareStatement(sql);
 			pst.setInt(1, Coupon_num);
 			java.sql.ResultSet rs = pst.executeQuery();
-			if(!(rs.next())) throw new Exception("此商品_订单记录不存在");
-			else {
+			while(rs.next()) {
 				BeanGoods_order bgo = new BeanGoods_order();
 				bgo.setOrder_num(rs.getInt(1));
 				bgo.setUser_num(rs.getInt(2));
@@ -347,7 +344,7 @@ public class Goods_orderManager {
 	public void Delete(int order_num) throws Exception {
 		if("".equals(String.valueOf(order_num))) throw new Exception("订单编号不可为空");
 		Order_detailManager odm = new Order_detailManager();
-		if(!(odm.loadbyOrder_num(order_num)==null)) throw new Exception("订单详情表中仍有此订单，拒绝删除");
+		if(!(odm.loadbyOrder_num(order_num).size()==0)) throw new Exception("订单详情表中仍有此订单，拒绝删除");
 		Connection conn = null;
 		try {
 			conn = DBUtil.getConnection();

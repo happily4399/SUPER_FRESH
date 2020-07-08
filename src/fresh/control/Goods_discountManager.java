@@ -13,11 +13,6 @@ import fresh.util.DBUtil;
 
 public class Goods_discountManager {
 	
-	public static void main(String[] args) throws Exception {
-		Goods_discountManager gdm = new Goods_discountManager();
-		gdm.add(2, 4, "2020-07-05", "2020-07-07");
-	}
-	
 	public List<BeanGoods_discount> LoadByGoods_num(int Goods_num) throws Exception {
 		List<BeanGoods_discount> result = new ArrayList<BeanGoods_discount>();
 		if("".equals(String.valueOf(Goods_num))) throw new Exception("商品编号不能为空");
@@ -72,7 +67,6 @@ public class Goods_discountManager {
 				bgd.setEnd_Date(rs.getTimestamp(4));
 				result.add(bgd);
 			}
-			if(result.get(1)==null) throw new Exception("此满折编号无活动记录");
 		}catch (SQLException e) {
 			e.printStackTrace();
 		}finally{

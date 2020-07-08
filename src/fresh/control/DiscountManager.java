@@ -13,8 +13,6 @@ import fresh.util.DBUtil;
 
 public class DiscountManager {
 	public static void main(String[] args) throws Exception {
-		DiscountManager dm = new DiscountManager();
-		dm.Add("-1周年大折扣", 20, (float) 0.5, "2020-07-04", "2020-07-11");
 	}
 	
 	public void Add(String Dis_content,int Dis_count,
@@ -189,6 +187,32 @@ public class DiscountManager {
 			java.sql.PreparedStatement pst = conn.prepareStatement(sql);
 			pst.setString(1, Dis_con);
 			pst.setInt(2, Dis_num);
+			pst.execute();
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}finally{
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO 自动生成的 catch 块
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public void Delete(int Dis_num) throws Exception {
+		Connection conn = null;
+		Goods_discountManager gdm = new Goods_discountManager();
+		Order_detailManager odm = new Order_detailManager();
+		try {
+			conn = DBUtil.getConnection();
+			if(gdm.LoadByDis_num(Dis_num).size()!=0) throw new Exception("Goods_discountManager表中仍存在该满折");
+			if(odm.loadbyDis_num(Dis_num).size()!=0) throw new Exception("Order_detail表中仍存在该满折");
+			String sql = "DELETE \r\n" + 
+					"FROM discount_infor\r\n" + 
+					"WHERE dis_num=?";
+			java.sql.PreparedStatement pst = conn.prepareStatement(sql);
+			pst.setInt( 1, Dis_num);
 			pst.execute();
 		}catch (SQLException e) {
 			e.printStackTrace();

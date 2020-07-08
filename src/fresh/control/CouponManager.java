@@ -13,7 +13,7 @@ import fresh.util.DBUtil;
 public class CouponManager {
 	public static void main(String[] args) throws Exception {
 		CouponManager cm = new CouponManager();
-		cm.add("十周年优惠券", 45, 20, "2030-07-05", "2030-07-10");
+		cm.Delete(6);
 	}
 	
 	public BeanCoupon loadByCoupon_num(int Coupon_num) throws Exception {
@@ -50,6 +50,39 @@ public class CouponManager {
 		return bc;
 	}
 	
+	public List<BeanCoupon> loadByCoupon_name(String Coupon_name) throws Exception {
+		List<BeanCoupon> result = new ArrayList<BeanCoupon>();
+		Connection conn = null;
+		try {
+			conn = DBUtil.getConnection();
+			String sql = "SELECT *\r\n" + 
+					"FROM Coupon\r\n" + 
+					"WHere Coupon_con like'%"+Coupon_name+"%'";
+			java.sql.Statement st = conn.createStatement();
+			java.sql.ResultSet rs = st.executeQuery(sql);
+			while(rs.next()) {
+				BeanCoupon bc = new BeanCoupon();
+				bc.setCoupon_num(rs.getInt(1));
+				bc.setCoupon_con(rs.getString(2));
+				bc.setApp_amount(rs.getFloat(3));
+				bc.setDed_amount(rs.getFloat(4));
+				bc.setCoupon_start_date(rs.getTimestamp(5));
+				bc.setCoupon_end_date(rs.getTimestamp(6));
+				result.add(bc);
+			}
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}finally{
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO 自动生成的 catch 块
+				e.printStackTrace();
+			}
+		}
+		return result;
+	}
+	
 	public List<BeanCoupon> loadAll() throws Exception {
 		List<BeanCoupon> result = new ArrayList<BeanCoupon>();
 		Connection conn = null;
@@ -65,8 +98,8 @@ public class CouponManager {
 				bc.setCoupon_con(rs.getString(2));
 				bc.setApp_amount(rs.getFloat(3));
 				bc.setDed_amount(rs.getFloat(4));
-				bc.setCoupon_start_date(rs.getTime(5));
-				bc.setCoupon_end_date(rs.getTime(6));
+				bc.setCoupon_start_date(rs.getTimestamp(5));
+				bc.setCoupon_end_date(rs.getTimestamp(6));
 				result.add(bc);
 			}
 		}catch (SQLException e) {
@@ -125,8 +158,8 @@ public class CouponManager {
 		Goods_orderManager gom = new Goods_orderManager();
 		Connection conn = null;
 		try {
-			if(!(gom.LoadbyCoupon_num(Coupon_num)==null)) throw new Exception("Goods_orderManager中仍有此优惠券，拒绝删除");;
 			conn = DBUtil.getConnection();
+			if(gom.LoadbyCoupon_num(Coupon_num).size()!=0) throw new Exception("Goods_orderManager中仍有此优惠券，拒绝删除");
 			String sql = "DELETE \r\n" + 
 					"FROM coupon\r\n" + 
 					"WHERE coupon_num=?";

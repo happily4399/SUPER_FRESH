@@ -115,7 +115,7 @@ public class RecipeManager {
 		if("".equals(String.valueOf(Recipe_num))) throw new Exception("菜谱编号不可为空");
 		Connection conn = null;
 		try {
-			if(!(grm.loadbyRecipe_num(Recipe_num)==null)) throw new Exception("Goods_recipeManager表中仍有此菜谱，拒绝删除");
+			if(!(grm.loadbyRecipe_num(Recipe_num).size()==0)) throw new Exception("Goods_recipeManager表中仍有此菜谱，拒绝删除");
 			conn = DBUtil.getConnection();
 			String sql = "DELETE \r\n" + 
 					"FROM recipe\r\n" + 
