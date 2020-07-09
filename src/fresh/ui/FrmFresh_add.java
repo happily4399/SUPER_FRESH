@@ -3,6 +3,7 @@ package fresh.ui;
 import java.awt.BorderLayout;
 import java.awt.Button;
 import java.awt.FlowLayout;
+import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -27,12 +28,13 @@ public class FrmFresh_add extends JDialog implements ActionListener {
 	private JTextField edtname = new JTextField(20);
 	private JTextField edtdes = new JTextField(20);
 	
-	public FrmFresh_add(JDialog f, String s, boolean b) {
+	public FrmFresh_add(Frame f, String s, boolean b) {
 		super(f,s,b);
 		toolBar.setLayout(new FlowLayout(FlowLayout.RIGHT));
 		toolBar.add(this.btnOk);
 		toolBar.add(btnCancel);
 		this.getContentPane().add(toolBar, BorderLayout.SOUTH);
+		
 		workPane.add(labelname);
 		workPane.add(edtname);
 		workPane.add(labeldes);

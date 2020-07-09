@@ -35,9 +35,14 @@ public class FrmUser_Change extends JDialog implements ActionListener{
 	private String User_Pnum="";
 
 	
-	public FrmUser_Change(JDialog f, String s, boolean b,String Pnum) {
+	public FrmUser_Change(JDialog f, String s, boolean b,String Pnum) throws Exception {
 		super(f,s,b);
 		this.User_Pnum=Pnum;
+		UserManager um = new UserManager();
+		name = new JTextField(um.loadbyPnum(Pnum).getUser_name(),20);
+		sex = new JTextField(um.loadbyPnum(Pnum).getUser_sex(),20);
+		email = new JTextField(um.loadbyPnum(Pnum).getUser_email(),20);
+		city = new JTextField(um.loadbyPnum(Pnum).getUser_city(),20);
 		toolBar.setLayout(new FlowLayout(FlowLayout.RIGHT));
 		toolBar.add(this.btnOk);
 		toolBar.add(btnCancel);

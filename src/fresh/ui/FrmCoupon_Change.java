@@ -14,6 +14,7 @@ import javax.swing.JTextField;
 
 import fresh.control.CouponManager;
 import fresh.control.UserManager;
+import fresh.model.BeanCoupon;
 
 public class FrmCoupon_Change extends JDialog implements ActionListener {
 		private JPanel toolBar = new JPanel();
@@ -35,9 +36,16 @@ public class FrmCoupon_Change extends JDialog implements ActionListener {
 		private int Coupon_num=0;
 
 		
-		public FrmCoupon_Change(JDialog f, String s, boolean b,int cn) {
+		public FrmCoupon_Change(JDialog f, String s, boolean b,int cn) throws Exception {
 			super(f,s,b);
 			this.Coupon_num=cn;
+			CouponManager cm = new CouponManager();
+			BeanCoupon bc = cm.loadByCoupon_num(cn);
+			edtCoupon_con = new JTextField(bc.getCoupon_con(),20);
+			edtapp_amount = new JTextField(String.valueOf(bc.getApp_amount()),20);
+			edtded_amount = new JTextField(String.valueOf(bc.getDed_amount()),20);
+			edtstart_date = new JTextField(String.valueOf(bc.getCoupon_start_date()),20);
+			edtend_date = new JTextField(String.valueOf(bc.getCoupon_end_date()),20);
 			toolBar.setLayout(new FlowLayout(FlowLayout.RIGHT));
 			toolBar.add(this.btnOk);
 			toolBar.add(btnCancel);
@@ -65,8 +73,8 @@ public class FrmCoupon_Change extends JDialog implements ActionListener {
 				this.setVisible(false);
 			else if(e.getSource()==this.btnOk){
 				String Coupon_con = edtCoupon_con.getText();
-				float app_amount = edtapp_amount.getAlignmentX();
-				float Ded_amount = edtded_amount.getAlignmentX();
+				float app_amount = Float.parseFloat(edtapp_amount.getText());
+				float Ded_amount = Float.parseFloat(edtded_amount.getText());
 				String Coupon_start_date = edtstart_date.getText();
 				String Coupon_end_date = edtend_date.getText();
 				try {

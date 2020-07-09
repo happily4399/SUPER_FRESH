@@ -476,4 +476,101 @@ public class GoodsManager {
 			}
 		}
 	}
+	
+	public void ChangeVip_price(int goods_num,float Vip_price) throws Exception {
+		if("".equals(String.valueOf(goods_num))) throw new Exception("商品编号不可为空");
+		Connection conn = null;
+		try {
+			conn = DBUtil.getConnection();
+			String sql = "UPDATE goods\r\n" + 
+					"SET Vip_price=?\r\n" + 
+					"WHERE goods_num=?";
+			java.sql.PreparedStatement pst = conn.prepareStatement(sql);
+			pst.setFloat(1, Vip_price);
+			pst.setInt(2, goods_num);
+			pst.execute();
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}finally{
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO 自动生成的 catch 块
+				e.printStackTrace();
+			}
+		}
+	}
+	public List<BeanGoods> loadbyGoods_nameFresh(int Fresh_num,String Goods_name){
+		List<BeanGoods> result = new ArrayList<BeanGoods>();
+		Connection conn = null;
+		try {
+			conn = DBUtil.getConnection();
+			String sql = "SELECT *\r\n" + 
+					"FROM goods\r\n" + 
+					"WHERE goods_name like '%"+Goods_name+"%' AND Category_number="+Fresh_num;
+			java.sql.Statement st = conn.createStatement();
+			java.sql.ResultSet rs = st.executeQuery(sql);
+			while(rs.next()) {
+				BeanGoods bg = new BeanGoods();
+				bg.setGoods_num(rs.getInt(1));
+				bg.setCate_gory_number(rs.getInt(2));
+				bg.setGoods_name(rs.getString(3));
+				bg.setGoods_price(rs.getFloat(4));
+				bg.setVip_price(rs.getFloat(5));
+				bg.setGoods_count(rs.getInt(6));
+				bg.setGoods_spe(rs.getString(7));
+				bg.setGoods_det(rs.getString(8));
+				bg.setSales_count(rs.getInt(9));
+				result.add(bg);
+			}
+			st.close();
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}finally{
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO 自动生成的 catch 块
+				e.printStackTrace();
+			}
+		}
+		return result;
+	}
+	
+	public List<BeanGoods> loadbyGoods_name(String Goods_name){
+		List<BeanGoods> result = new ArrayList<BeanGoods>();
+		Connection conn = null;
+		try {
+			conn = DBUtil.getConnection();
+			String sql = "SELECT *\r\n" + 
+					"FROM goods\r\n" + 
+					"WHERE goods_name like '%"+Goods_name+"%'";
+			java.sql.Statement st = conn.createStatement();
+			java.sql.ResultSet rs = st.executeQuery(sql);
+			while(rs.next()) {
+				BeanGoods bg = new BeanGoods();
+				bg.setGoods_num(rs.getInt(1));
+				bg.setCate_gory_number(rs.getInt(2));
+				bg.setGoods_name(rs.getString(3));
+				bg.setGoods_price(rs.getFloat(4));
+				bg.setVip_price(rs.getFloat(5));
+				bg.setGoods_count(rs.getInt(6));
+				bg.setGoods_spe(rs.getString(7));
+				bg.setGoods_det(rs.getString(8));
+				bg.setSales_count(rs.getInt(9));
+				result.add(bg);
+			}
+			st.close();
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}finally{
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO 自动生成的 catch 块
+				e.printStackTrace();
+			}
+		}
+		return result;
+	}
 }

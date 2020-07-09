@@ -6,6 +6,7 @@ import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -14,37 +15,50 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import fresh.control.Fresh_categoryManager;
+import fresh.control.GoodsManager;
+import fresh.model.BeanFresh_category;
 
-public class FrmFresh_Change extends JDialog implements ActionListener {
+public class FrmGoods_add extends JDialog implements ActionListener {
 	private JPanel toolBar = new JPanel();
 	private JPanel workPane = new JPanel();
 	private Button btnOk = new Button("确定");
 	private Button btnCancel = new Button("取消");
 	
-	private JLabel labelname = new JLabel("类别名称：");
-	private JLabel labeldes = new JLabel("类别描述：");
+	private JLabel labelname = new JLabel("商品名称：");
+	private JLabel labelprice = new JLabel("商品价格：");
+	private JLabel labelcount = new JLabel("商品数量：");
+	private JLabel labelspe = new JLabel("商品规格：");
+	private JLabel labeldes = new JLabel("商品描述：");
 	
 	private JTextField edtname = new JTextField(20);
+	private JTextField edtprice = new JTextField(20);
+	private JTextField edtcount = new JTextField(20);
+	private JTextField edtspe = new JTextField(20);
 	private JTextField edtdes = new JTextField(20);
-	private int Fresh_num;
+	private int Fresh_num=0;
 	
-	public FrmFresh_Change(Frame f, String s, boolean b,int Fresh_num) throws Exception {
+	public FrmGoods_add(Frame f, String s, boolean b,int i) throws Exception {
 		super(f,s,b);
-		this.Fresh_num=Fresh_num;
 		Fresh_categoryManager fcm = new Fresh_categoryManager();
-		edtname = new JTextField(fcm.loadbynum(Fresh_num).getCategory_name(),20);
-		edtdes = new JTextField(fcm.loadbynum(Fresh_num).getCategory_des(),20);
+		List<BeanFresh_category> Fresh= fcm.loadall();
+		Fresh_num=Fresh.get(i).getCategory_number();
 		toolBar.setLayout(new FlowLayout(FlowLayout.RIGHT));
 		toolBar.add(this.btnOk);
 		toolBar.add(btnCancel);
 		this.getContentPane().add(toolBar, BorderLayout.SOUTH);
 		workPane.add(labelname);
 		workPane.add(edtname);
+		workPane.add(labelprice);
+		workPane.add(edtprice);
+		workPane.add(labelcount);
+		workPane.add(edtcount);
+		workPane.add(labelspe);
+		workPane.add(edtspe);
 		workPane.add(labeldes);
 		workPane.add(edtdes);
 		
 		this.getContentPane().add(workPane, BorderLayout.CENTER);
-		this.setSize(300, 150);
+		this.setSize(300, 250);
 		this.btnCancel.addActionListener(this);
 		this.btnOk.addActionListener(this);
 		this.setVisible(true);
@@ -55,11 +69,13 @@ public class FrmFresh_Change extends JDialog implements ActionListener {
 			this.setVisible(false);
 		else if(e.getSource()==this.btnOk){
 			String name = edtname.getText();
+			int count = Integer.parseInt(edtcount.getText());
+			float price = Float.parseFloat(edtprice.getText());
+			String spe = edtspe.getText();
 			String des = edtdes.getText();
 			try {
-				Fresh_categoryManager fcm = new Fresh_categoryManager();
-				fcm.changename(Fresh_num, name);
-				fcm.changedes(Fresh_num, des);
+				GoodsManager gm = new GoodsManager();
+				gm.Add(Fresh_num, name, price, count, spe, des);
 				this.setVisible(false);
 			} catch (Exception e1) {
 				JOptionPane.showMessageDialog(null,e1.getMessage(), "错误",JOptionPane.ERROR_MESSAGE);

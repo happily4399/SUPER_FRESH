@@ -66,8 +66,8 @@ public class FrmCoupon_add extends JDialog implements ActionListener {
 			this.setVisible(false);
 		else if(e.getSource()==this.btnOk){
 			String Coupon_con = edtCoupon_con.getText();
-			float app_amount = edtapp_amount.getAlignmentX();
-			float Ded_amount = edtded_amount.getAlignmentX();
+			float app_amount = Float.parseFloat(edtapp_amount.getText());
+			float Ded_amount = Float.parseFloat(edtded_amount.getText());
 			String Coupon_start_date = edtstart_date.getText();
 			String Coupon_end_date = edtend_date.getText();
 			try {

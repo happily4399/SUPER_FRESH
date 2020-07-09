@@ -150,10 +150,10 @@ public class FrmCoupon_Manager extends JDialog implements ActionListener{
 		else if(e.getSource()==this.btnChange) {
 			int i = this.CouponTable.getSelectedRow();
 			if(i<0) {
-				JOptionPane.showMessageDialog(null,  "请选择账号","提示",JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null,  "请选择优惠券","提示",JOptionPane.ERROR_MESSAGE);
 				return;
 			}
-			if(JOptionPane.showConfirmDialog(this,"确定更改此账号信息吗？","确认",JOptionPane.YES_NO_OPTION)==JOptionPane.YES_OPTION){
+			if(JOptionPane.showConfirmDialog(this,"确定更改此优惠券信息吗？","确认",JOptionPane.YES_NO_OPTION)==JOptionPane.YES_OPTION){
 				String Cn=this.tblData[i][0].toString();
 				int Coupon_num=Integer.parseInt(Cn);
 				try {
