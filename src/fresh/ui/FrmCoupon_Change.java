@@ -60,6 +60,7 @@ public class FrmCoupon_Change extends JDialog implements ActionListener {
 			workPane.add(edtstart_date);
 			workPane.add(labelend_date);
 			workPane.add(edtend_date);
+			
 			this.getContentPane().add(workPane, BorderLayout.CENTER);
 			this.setSize(300, 230);
 			this.btnCancel.addActionListener(this);

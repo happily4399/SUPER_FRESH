@@ -544,7 +544,7 @@ public class GoodsManager {
 			conn = DBUtil.getConnection();
 			String sql = "SELECT *\r\n" + 
 					"FROM goods\r\n" + 
-					"WHERE goods_name like '%"+Goods_name+"%'";
+					"WHERE goods_name like '%"+Goods_name+"%' or goods_det like '%"+Goods_name+"%'";
 			java.sql.Statement st = conn.createStatement();
 			java.sql.ResultSet rs = st.executeQuery(sql);
 			while(rs.next()) {

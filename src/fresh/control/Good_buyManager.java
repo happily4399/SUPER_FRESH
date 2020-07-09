@@ -10,11 +10,6 @@ import fresh.model.BeanUser;
 import fresh.util.DBUtil;
 
 public class Good_buyManager {
-	public static void main(String[] args) throws Exception {
-		Good_buyManager gbm = new Good_buyManager();
-		GoodsManager gm = new GoodsManager();
-		gbm.add(2, "31802323", 40, "入库");
-	}
 	
 	public BeanGood_buy LoadbyBuy_num(int buy_num) throws Exception {
 		if("".equals(buy_num)) throw new Exception("采购单号不能为空");
@@ -130,14 +125,13 @@ public class Good_buyManager {
 		return Count;
 	}
 	
-	public void add(int goods_num,String admin_num,int buy_count,String buy_state) throws Exception {
+	public void add(int goods_num,String admin_num,int buy_count) throws Exception {
 		AdminManager am = new AdminManager();
 		GoodsManager gm = new GoodsManager();
 		Good_buyManager gb = new Good_buyManager();
 		if("".equals(String.valueOf(goods_num))) throw new Exception("商品编号不可为空");
 		if("".equals(String.valueOf(admin_num))) throw new Exception("管理员编号不可为空");
 		if("".equals(String.valueOf(buy_count))) throw new Exception("采购数量不可为空");
-		if("".equals(String.valueOf(buy_state))) throw new Exception("采购状态不可为空");
 		Connection conn = null;
 		try {
 			if(am.loadbynum(admin_num)==null) throw new Exception("管理员不存在");
@@ -150,12 +144,9 @@ public class Good_buyManager {
 			pst.setInt(1, goods_num);
 			pst.setString(2, admin_num);
 			pst.setInt(3, buy_count);
-			pst.setString(4, buy_state);
+			pst.setString(4, "下单");
 			pst.execute();
 			pst.close();
-			if(buy_state=="入库") {
-				gm.AddGoods_count(goods_num, buy_count);
-			}
 		}catch (SQLException e) {
 			e.printStackTrace();
 		}finally{

@@ -49,6 +49,7 @@ public class FrmChang_person extends JDialog implements ActionListener{
 		workPane.add(email);
 		workPane.add(labelcity);
 		workPane.add(city);
+		
 		this.getContentPane().add(workPane, BorderLayout.CENTER);
 		this.setSize(300, 200);
 		this.btnCancel.addActionListener(this);

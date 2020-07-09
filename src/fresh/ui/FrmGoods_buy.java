@@ -11,47 +11,52 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
-import fresh.control.AdminManager;
-import fresh.control.UserManager;
+import fresh.control.Good_buyManager;
 import fresh.model.BeanAdmin;
 
-public class FrmAdmin_ChangeName extends JDialog implements ActionListener{
+public class FrmGoods_buy extends JDialog implements ActionListener {
 	private JPanel toolBar = new JPanel();
 	private JPanel workPane = new JPanel();
+	
+	private JLabel labelcount = new JLabel("采购数量：");
+	private JTextField edtcount = new JTextField(20);
+	
 	private Button btnOk = new Button("确定");
 	private Button btnCancel = new Button("取消");
-	
-	private JLabel labelname = new JLabel("新姓名：");
-	private JTextField name = new JTextField(20);
-	
-	public FrmAdmin_ChangeName(Frame f, String s, boolean b) {
+	private int Goods_num;
+	FrmGoods_buy(Frame f,String s,boolean b,int Goods_num){
 		super(f,s,b);
-		toolBar.setLayout(new FlowLayout(FlowLayout.RIGHT));
-		toolBar.add(this.btnOk);
+		this.Goods_num=Goods_num;
+		toolBar.add(btnOk);
 		toolBar.add(btnCancel);
+		toolBar.setLayout(new FlowLayout(FlowLayout.RIGHT));
 		this.getContentPane().add(toolBar, BorderLayout.SOUTH);
-		workPane.add(labelname);
-		workPane.add(name);
 		
+		workPane.add(labelcount);
+		workPane.add(edtcount);
 		this.getContentPane().add(workPane, BorderLayout.CENTER);
-		this.setSize(300, 150);
-		this.btnCancel.addActionListener(this);
+		
+		this.setSize(300,100);
 		this.btnOk.addActionListener(this);
+		this.btnCancel.addActionListener(this);
 		this.setVisible(true);
 	}
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if(e.getSource()==this.btnCancel)
+		if(e.getSource()==this.btnCancel) {
 			this.setVisible(false);
-		else if(e.getSource()==this.btnOk){
+		}
+		
+		else if(e.getSource()==this.btnOk) {
+			int Goods_count = Integer.parseInt(edtcount.getText());
 			try {
-				AdminManager am = new AdminManager();
-				am.Changname(BeanAdmin.currentloginAamin.getAdmin_num(), new String(name.getText()));
+				Good_buyManager gbm = new Good_buyManager();
+				gbm.add(Goods_num, BeanAdmin.currentloginAamin.getAdmin_num(), Goods_count);
 				this.setVisible(false);
-			} catch (Exception e1) {
+			}catch (Exception e1) {
 				JOptionPane.showMessageDialog(null,e1.getMessage(), "错误",JOptionPane.ERROR_MESSAGE);
 				return;
 			}

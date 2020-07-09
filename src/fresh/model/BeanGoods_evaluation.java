@@ -8,7 +8,7 @@ public class BeanGoods_evaluation {
 	private String eva_con;
 	private java.util.Date eva_date;
 	private int star;
-	private File photo;
+	private String photo;
 	
 	public int getOrder_num() {
 		return Order_num;
@@ -40,10 +40,10 @@ public class BeanGoods_evaluation {
 	public void setStar(int star) {
 		this.star = star;
 	}
-	public File getPhoto() {
+	public String getPhoto() {
 		return photo;
 	}
-	public void setPhoto(File photo) {
+	public void setPhoto(String photo) {
 		this.photo = photo;
 	}
 	

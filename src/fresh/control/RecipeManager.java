@@ -27,6 +27,7 @@ public class RecipeManager {
 				br.setRecipe_name(rs.getString(2));
 				br.setRecipe_mater(rs.getString(3));
 				br.setRecipe_step(rs.getString(4));
+				br.setRecipe_picture(rs.getString(5));
 			}
 			pst.close();
 			rs.close();
@@ -58,6 +59,7 @@ public class RecipeManager {
 				br.setRecipe_name(rs.getString(2));
 				br.setRecipe_mater(rs.getString(3));
 				br.setRecipe_step(rs.getString(4));
+				br.setRecipe_picture(rs.getString(5));
 				result.add(br);
 			}
 			pst.close();
@@ -75,7 +77,41 @@ public class RecipeManager {
 		return result;
 	}
 	
-	public void add(String name,String mater,String step) throws Exception {
+	public List<BeanRecipe> Loadbyname(String name) throws Exception {
+		List<BeanRecipe> result = new ArrayList<BeanRecipe>();
+		Connection conn = null;
+		try {
+			conn = DBUtil.getConnection();
+			String sql = "SELECT *\r\n" + 
+					"FROM recipe\r\n" + 
+					"WHERE Recipe_name like '%"+name+"%' or Recipe_mater like '%"+name+"%' or Recipe_step like '%"+name+"%'";
+			java.sql.PreparedStatement pst = conn.prepareStatement(sql);
+			java.sql.ResultSet rs = pst.executeQuery();
+			while(rs.next()) {
+				BeanRecipe br = new BeanRecipe();
+				br.setRecipe_num(rs.getInt(1));
+				br.setRecipe_name(rs.getString(2));
+				br.setRecipe_mater(rs.getString(3));
+				br.setRecipe_step(rs.getString(4));
+				br.setRecipe_picture(rs.getString(5));
+				result.add(br);
+			}
+			pst.close();
+			rs.close();
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}finally{
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO 自动生成的 catch 块
+				e.printStackTrace();
+			}
+		}
+		return result;
+	}
+	
+	public void add(String name,String mater,String step,String photo) throws Exception {
 		if("".equals(String.valueOf(name))) throw new Exception("菜品名称不可为空");
 		if("".equals(String.valueOf(mater))) throw new Exception("菜品用料不可为空");
 		Connection conn = null;
@@ -91,12 +127,13 @@ public class RecipeManager {
 			rs.close();
 			pst.close();
 			sql = "INSERT\r\n" + 
-					"INTO recipe(recipe_name,recipe_mater,recipe_step)\r\n" + 
-					"VALUES(?,?,?)";
+					"INTO recipe(recipe_name,recipe_mater,recipe_step,recipe_picture)\r\n" + 
+					"VALUES(?,?,?,?)";
 			pst = conn.prepareStatement(sql);
 			pst.setString(1, name);
 			pst.setString(2, mater);
 			pst.setString(3, step);
+			pst.setString(4, photo);
 			pst.execute();
 		}catch (SQLException e) {
 			e.printStackTrace();
@@ -135,9 +172,8 @@ public class RecipeManager {
 		}
 	}
 	
-	public void ChangeRecipe_num(int Recipe_num,String newRecipe_name) throws Exception {
+	public void ChangeRecipe_name(int Recipe_num,String newRecipe_name) throws Exception {
 		if("".equals(String.valueOf(Recipe_num))) throw new Exception("菜谱编号不可为空");
-		if("".equals(String.valueOf(newRecipe_name))) throw new Exception("菜品名称不可为空");
 		Connection conn = null;
 		try {
 			conn = DBUtil.getConnection();
@@ -156,6 +192,84 @@ public class RecipeManager {
 					"WHERE Recipe_num=?";
 			pst = conn.prepareStatement(sql);
 			pst.setString(1, newRecipe_name);
+			pst.setInt(2, Recipe_num);
+			pst.execute();
+			pst.close();
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}finally{
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO 自动生成的 catch 块
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public void ChangeRecipe_mater(int Recipe_num,String Recipe_mater) throws Exception {
+		if("".equals(String.valueOf(Recipe_num))) throw new Exception("菜谱编号不可为空");
+		Connection conn = null;
+		try {
+			conn = DBUtil.getConnection();
+			
+			String sql = "UPDATE recipe\r\n" + 
+					"SET Recipe_mater=?\r\n" + 
+					"WHERE Recipe_num=?";
+			java.sql.PreparedStatement pst = conn.prepareStatement(sql);
+			pst.setString(1, Recipe_mater);
+			pst.setInt(2, Recipe_num);
+			pst.execute();
+			pst.close();
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}finally{
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO 自动生成的 catch 块
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public void ChangeRecipe_step(int Recipe_num,String Recipe_step) throws Exception {
+		if("".equals(String.valueOf(Recipe_num))) throw new Exception("菜谱编号不可为空");
+		Connection conn = null;
+		try {
+			conn = DBUtil.getConnection();
+			
+			String sql = "UPDATE recipe\r\n" + 
+					"SET Recipe_step=?\r\n" + 
+					"WHERE Recipe_num=?";
+			java.sql.PreparedStatement pst = conn.prepareStatement(sql);
+			pst.setString(1, Recipe_step);
+			pst.setInt(2, Recipe_num);
+			pst.execute();
+			pst.close();
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}finally{
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO 自动生成的 catch 块
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public void ChangeRecipe_picture(int Recipe_num,String Recipe_picture) throws Exception {
+		if("".equals(String.valueOf(Recipe_num))) throw new Exception("菜谱编号不可为空");
+		Connection conn = null;
+		try {
+			conn = DBUtil.getConnection();
+			
+			String sql = "UPDATE recipe\r\n" + 
+					"SET Recipe_picture=?\r\n" + 
+					"WHERE Recipe_num=?";
+			java.sql.PreparedStatement pst = conn.prepareStatement(sql);
+			pst.setString(1, Recipe_picture);
 			pst.setInt(2, Recipe_num);
 			pst.execute();
 			pst.close();

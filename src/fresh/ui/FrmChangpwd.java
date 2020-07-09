@@ -38,6 +38,7 @@ public class FrmChangpwd extends JDialog implements ActionListener{
 		workPane.add(edtPwdOld);
 		workPane.add(labelPwd);
 		workPane.add(edtPwd);
+		
 		this.getContentPane().add(workPane, BorderLayout.CENTER);
 		this.setSize(300, 150);
 		this.btnCancel.addActionListener(this);

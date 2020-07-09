@@ -1,4 +1,5 @@
 package fresh.ui;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
@@ -37,6 +38,8 @@ public class FrmMain extends JFrame implements ActionListener{
     
     private JMenuItem System_User=new JMenuItem("用户管理");
     private JMenuItem System_Coupon = new JMenuItem("优惠券管理");
+    private JMenuItem System_Recipe = new JMenuItem("菜谱管理");
+    private JMenuItem System_Goodbuy = new JMenuItem("采购表管理");
     
 	private FrmLogin dlglogin = null;
 	private JPanel statusBar = new JPanel();
@@ -48,6 +51,7 @@ public class FrmMain extends JFrame implements ActionListener{
 	private JMenuItem JMFresh_Delete = new JMenuItem("删除类别");
 	
 	private JMenu menu_Goods=new JMenu("商品管理");
+	private JMenuItem JMGoods_buy = new JMenuItem("采购商品");
 	private JMenuItem JMGoods_Add = new JMenuItem("增加商品");
 	private JMenuItem JMGoods_Change = new JMenuItem("修改商品信息");
 	private JMenuItem JMGoods_Delete = new JMenuItem("删除商品");
@@ -216,6 +220,7 @@ public class FrmMain extends JFrame implements ActionListener{
 			menu_Goods.add(JMGoods_Change);
 			menu_Goods.add(JMGoods_Add);
 			menu_Goods.add(JMGoods_Delete);
+			menu_Goods.add(JMGoods_buy);
 			menu_Admin.add(Admin_ChangPasswd);
 			Admin_ChangPasswd.addActionListener(this);
 			menu_Admin.add(Admin_Cancel);
@@ -223,10 +228,15 @@ public class FrmMain extends JFrame implements ActionListener{
 			menu_Admin.add(Admin_Changname);
 			Admin_Changname.addActionListener(this);
 			
+			
 			menu_Admin_System.add(System_User);
 			System_User.addActionListener(this);
 			menu_Admin_System.add(System_Coupon);
 			System_Coupon.addActionListener(this);
+			menu_Admin_System.add(System_Recipe);
+			System_Recipe.addActionListener(this);
+			menu_Admin_System.add(System_Goodbuy);
+			System_Goodbuy.addActionListener(this);
 			
 			menubar.add(menu_Admin_System);
 			menubar.add(menu_Admin);
@@ -236,6 +246,7 @@ public class FrmMain extends JFrame implements ActionListener{
 			this.JMGoods_Add.addActionListener(this);
 			this.JMGoods_Delete.addActionListener(this);
 			this.JMGoods_Change.addActionListener(this);
+			this.JMGoods_buy.addActionListener(this);
 			
 		}
 		
@@ -429,7 +440,7 @@ public class FrmMain extends JFrame implements ActionListener{
 				fgc.setVisible(false);
 				this.reloadGoodsTable(i);
 			}catch(Exception e1) {
-				e1.printStackTrace();
+				JOptionPane.showMessageDialog(null, e1.getMessage(),"错误",JOptionPane.ERROR_MESSAGE);
 			}
 			this.reloadSearchFreshTable();
 		}
@@ -459,9 +470,45 @@ public class FrmMain extends JFrame implements ActionListener{
 			}
 			this.reloadGoodsTable(i);
 		}
+		
 		else if(e.getSource()==this.btnClear) {
 			FreshTable.clearSelection();
 			GoodsTable.clearSelection();
+		}
+		
+		else if(e.getSource()==this.System_Recipe) { 
+			FrmRecipe_Manager frm = new FrmRecipe_Manager(this,"菜谱管理系统",true);
+			frm.setVisible(false);
+		}
+		
+		else if(e.getSource()==this.JMGoods_buy) {
+			int i = this.FreshTable.getSelectedRow();
+			int j = this.GoodsTable.getSelectedRow();
+			if(j<0) {
+				JOptionPane.showMessageDialog(null,  "请选择商品","提示",JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			if(JOptionPane.showConfirmDialog(this,"确定采购此商品信息吗？","确认",JOptionPane.YES_NO_OPTION)==JOptionPane.YES_OPTION){
+				String Cn=this.tblGoodsData[j][0].toString();
+				int Goods_num=Integer.parseInt(Cn);
+				try {
+					FrmGoods_buy fgb = new FrmGoods_buy(this,"采购商品",true,Goods_num);
+					if(i>=0) {
+						this.reloadGoodsTable(i);
+					}else {
+						this.reloadGoodsTablebyname();
+					}
+					this.reloadFreshTable();
+				} catch (Exception e1) {
+					JOptionPane.showMessageDialog(null, e1.getMessage(),"错误",JOptionPane.ERROR_MESSAGE);
+				}
+				
+			}
+			this.reloadGoodsTable(i);
+		}
+		else if(e.getSource()==this.System_Goodbuy) {
+			FrmGoodbuy_SystemManager fgsm = new FrmGoodbuy_SystemManager(this,"采购详情表",true);
+			fgsm.setVisible(false);
 		}
 	}	
 }

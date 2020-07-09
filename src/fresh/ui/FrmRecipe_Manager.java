@@ -4,16 +4,16 @@ import java.awt.BorderLayout;
 import java.awt.Button;
 import java.awt.FlowLayout;
 import java.awt.Frame;
+import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -24,48 +24,48 @@ import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
 import fresh.control.Goods_orderManager;
+import fresh.control.RecipeManager;
 import fresh.control.UserManager;
 import fresh.model.BeanGoods_order;
+import fresh.model.BeanRecipe;
 import fresh.model.BeanUser;
 
-public class FrmUserManager extends JDialog implements ActionListener{
+public class FrmRecipe_Manager extends JDialog implements ActionListener{
 	
 	private JPanel toolBar = new JPanel();
-	private Button btnChange = new Button("修改用户信息");
-	private Button btnAdd = new Button("增加用户");
-	private Button btnDelete = new Button("删除用户");
+	private Button btnChange = new Button("修改菜谱信息");
+	private Button btnAdd = new Button("增加菜谱");
+	private Button btnDelete = new Button("删除菜谱");
 	private Button btnSearch = new Button("查询");
 	
 	private JTextField edtKeyword = new JTextField(10);
-	private JLabel Labelname = new JLabel("根据用户名查询：");
+	private JLabel Labelname = new JLabel("根据字符查询：");
 	
-	private Object tblTitle[]={"用户编号","姓名","性别","密码","手机号","邮箱","城市","注册日期","用户状态","是否会员","会员到期时间"};
+	private Object tblTitle[]={"菜谱编号","菜谱名称","菜谱用料","步骤","图片"};
 	private Object tblData[][];
 	DefaultTableModel tablmod=new DefaultTableModel();
-	private JTable userTable=new JTable(tablmod);
-	DefaultTableModel tablmod_goods=new DefaultTableModel();
-	private JTable Goods_OrdersTable=new JTable(tablmod_goods);
-	private void reloadUserTable(){
+	private JTable RecipeTable=new JTable(tablmod);
+	
+	private void reloadRecipeTable(){
 		try {
-			UserManager um = new UserManager();
-			List<BeanUser> users= um.loadall();
-			tblData =new Object[users.size()][11];
-			for(int i=0;i<users.size();i++){
-				tblData[i][0]=users.get(i).getUser_num();
-				tblData[i][1]=users.get(i).getUser_name();
-				tblData[i][2]=users.get(i).getUser_sex();
-				tblData[i][3]=users.get(i).getUser_pwd();
-				tblData[i][4]=users.get(i).getUser_Pnum();
-				tblData[i][5]=users.get(i).getUser_email();
-				tblData[i][6]=users.get(i).getUser_city();
-				tblData[i][7]=users.get(i).getUser_reg_date();
-				tblData[i][8]=users.get(i).getUser_state();
-				tblData[i][9]=users.get(i).getUser_vip();
-				tblData[i][10]=users.get(i).getVip_ddl();
+			RecipeManager  rm = new RecipeManager();
+			List<BeanRecipe> recipes = new ArrayList<BeanRecipe>();
+			recipes = rm.LoadAll();
+			tblData =new Object[recipes.size()][5];
+			for(int i=0;i<recipes.size();i++){
+				tblData[i][0]=recipes.get(i).getRecipe_num();
+				tblData[i][1]=recipes.get(i).getRecipe_name();
+				tblData[i][2]=recipes.get(i).getRecipe_mater();
+				tblData[i][3]=recipes.get(i).getRecipe_step();
+				if(!"".equals(recipes.get(i).getRecipe_picture())) {
+					ImageIcon icon = new ImageIcon("E:\\java photo\\timg.jpg");
+					JLabel label = new JLabel(icon);
+					tblData[i][4]=label;
+				}
 			}
 			tablmod.setDataVector(tblData,tblTitle);
-			this.userTable.validate();
-			this.userTable.repaint();
+			this.RecipeTable.validate();
+			this.RecipeTable.repaint();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -74,32 +74,31 @@ public class FrmUserManager extends JDialog implements ActionListener{
 	
 	private void reloadTable(){
 		try {
-			List<BeanUser> users = new ArrayList<BeanUser>();
-			users=(new UserManager()).loadbyUser_name(this.edtKeyword.getText());
-			tblData =new Object[users.size()][11];
-			for(int i=0;i<users.size();i++){
-				tblData[i][0]=users.get(i).getUser_num();
-				tblData[i][1]=users.get(i).getUser_name();
-				tblData[i][2]=users.get(i).getUser_sex();
-				tblData[i][3]=users.get(i).getUser_pwd();
-				tblData[i][4]=users.get(i).getUser_Pnum();
-				tblData[i][5]=users.get(i).getUser_email();
-				tblData[i][6]=users.get(i).getUser_city();
-				tblData[i][7]=users.get(i).getUser_reg_date();
-				tblData[i][8]=users.get(i).getUser_state();
-				tblData[i][9]=users.get(i).getUser_vip();
-				tblData[i][10]=users.get(i).getVip_ddl();
+			RecipeManager  rm = new RecipeManager();
+			List<BeanRecipe> recipes = new ArrayList<BeanRecipe>();
+			recipes = rm.Loadbyname(this.edtKeyword.getText());
+			tblData =new Object[recipes.size()][5];
+			for(int i=0;i<recipes.size();i++){
+				tblData[i][0]=recipes.get(i).getRecipe_num();
+				tblData[i][1]=recipes.get(i).getRecipe_name();
+				tblData[i][2]=recipes.get(i).getRecipe_mater();
+				tblData[i][3]=recipes.get(i).getRecipe_step();
+				if(!"".equals(recipes.get(i).getRecipe_picture())) {
+					ImageIcon icon = new ImageIcon(recipes.get(i).getRecipe_picture());
+					JLabel label = new JLabel(icon);
+					tblData[i][4]=label;
+				}
 			}
 			tablmod.setDataVector(tblData,tblTitle);
-			this.userTable.validate();
-			this.userTable.repaint();
+			this.RecipeTable.validate();
+			this.RecipeTable.repaint();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 	
-	public FrmUserManager(Frame f, String s, boolean b) {
+	public FrmRecipe_Manager(Frame f, String s, boolean b) {
 		super(f, s, b);
 		toolBar.setLayout(new FlowLayout(FlowLayout.LEFT));
 		toolBar.add(btnAdd);
@@ -110,8 +109,8 @@ public class FrmUserManager extends JDialog implements ActionListener{
 		toolBar.add(btnSearch);
 		this.getContentPane().add(toolBar, BorderLayout.NORTH);
 		//提取现有数据
-		this.reloadUserTable();
-		this.getContentPane().add(new JScrollPane(this.userTable), BorderLayout.CENTER);
+		this.reloadRecipeTable();
+		this.getContentPane().add(new JScrollPane(this.RecipeTable), BorderLayout.CENTER);
 		// 屏幕居中显示
 		this.setSize(1500, 600);
 		double width = Toolkit.getDefaultToolkit().getScreenSize().getWidth();
@@ -135,23 +134,28 @@ public class FrmUserManager extends JDialog implements ActionListener{
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource()==this.btnAdd) {
-			FrmUserRegister fug = new FrmUserRegister(this,"添加用户",true);
-			this.reloadUserTable();
-			fug.setVisible(false);
+			try {
+				FrmRecipe_Add fra = new FrmRecipe_Add(this,"添加菜谱",true);
+				this.reloadRecipeTable();
+				fra.setVisible(false);
+			}catch (Exception e1) {
+				JOptionPane.showMessageDialog(null, e1.getMessage(),"错误",JOptionPane.ERROR_MESSAGE);
+			}
 		}
 		
 		else if(e.getSource()==this.btnDelete){
-			UserManager um = new UserManager();
-			int i = this.userTable.getSelectedRow();
+			RecipeManager rm = new RecipeManager();
+			int i = this.RecipeTable.getSelectedRow();
 			if(i<0) {
 				JOptionPane.showMessageDialog(null,  "请选择账号","提示",JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 			if(JOptionPane.showConfirmDialog(this,"确定删除账号吗？","确认",JOptionPane.YES_NO_OPTION)==JOptionPane.YES_OPTION){
-				String userPnum=this.tblData[i][4].toString();
+				String rc=this.tblData[i][0].toString();
+				int Recipe_num = Integer.parseInt(rc);
 				try {
-					um.Delete(userPnum);
-					this.reloadUserTable();
+					rm.Delete(Recipe_num);
+					this.reloadRecipeTable();
 				} catch (Exception e1) {
 					JOptionPane.showMessageDialog(null, e1.getMessage(),"错误",JOptionPane.ERROR_MESSAGE);
 				}
@@ -160,22 +164,23 @@ public class FrmUserManager extends JDialog implements ActionListener{
 		}
 		
 		else if(e.getSource()==this.btnChange) {
-			int i = this.userTable.getSelectedRow();
+			int i = this.RecipeTable.getSelectedRow();
 			if(i<0) {
 				JOptionPane.showMessageDialog(null,  "请选择账号","提示",JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 			if(JOptionPane.showConfirmDialog(this,"确定更改此账号信息吗？","确认",JOptionPane.YES_NO_OPTION)==JOptionPane.YES_OPTION){
-				String userPnum=this.tblData[i][4].toString();
+				String rn=this.tblData[i][0].toString();
+				int Recipe_num = Integer.parseInt(rn);
 				try {
-					FrmUser_Change fcp = new FrmUser_Change(this,"修改用户信息",true, userPnum);
-					this.reloadUserTable();
+					FrmRecipe_Change fcp = new FrmRecipe_Change(this,"修改用户信息",true, Recipe_num);
+					this.reloadRecipeTable();
 				} catch (Exception e1) {
 					JOptionPane.showMessageDialog(null, e1.getMessage(),"错误",JOptionPane.ERROR_MESSAGE);
 				}
 				
 			}
-			this.reloadUserTable();
+			this.reloadRecipeTable();
 		}
 		else if(e.getSource()==this.btnSearch) {
 			this.reloadTable();

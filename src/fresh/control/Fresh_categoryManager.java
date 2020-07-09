@@ -208,7 +208,7 @@ public class Fresh_categoryManager {
 			conn = DBUtil.getConnection();
 			String sql="SELECT *\r\n" + 
 					"FROM fresh_category\r\n" + 
-					"WHERE Category_name like '%"+Fresh_name+"%'";
+					"WHERE Category_name like '%"+Fresh_name+"%' or category_des like '%"+Fresh_name+"%'";
 			java.sql.Statement st = conn.createStatement();
 			java.sql.ResultSet rs = st.executeQuery(sql);
 			while(rs.next()) {

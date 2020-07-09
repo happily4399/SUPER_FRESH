@@ -7,7 +7,7 @@ public class BeanRecipe {
 	private String Recipe_name;
 	private String Recipe_mater;
 	private String Recipe_step;
-	private File Recipe_picture;
+	private String Recipe_picture;
 	public int getRecipe_num() {
 		return Recipe_num;
 	}
@@ -32,10 +32,10 @@ public class BeanRecipe {
 	public void setRecipe_step(String recipe_step) {
 		Recipe_step = recipe_step;
 	}
-	public File getRecipe_picture() {
+	public String getRecipe_picture() {
 		return Recipe_picture;
 	}
-	public void setRecipe_picture(File recipe_picture) {
+	public void setRecipe_picture(String recipe_picture) {
 		Recipe_picture = recipe_picture;
 	}
 	
