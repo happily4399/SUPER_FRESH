@@ -213,8 +213,13 @@ public class FrmPromotionManager extends JDialog implements ActionListener{
 		}
 		
 		else if(e.getSource()==this.btnAdd) {
-			FrmCoupon_add fca = new FrmCoupon_add(this,"促销添加界面",true);
-			fca.setVisible(false);
+			try {
+				FrmPro_Add fpa = new FrmPro_Add(this,"添加促销活动",true);
+				fpa.setVisible(false);
+			} catch (Exception e1) {
+				JOptionPane.showMessageDialog(null, e1.getMessage(),"错误",JOptionPane.ERROR_MESSAGE);
+			}
+			this.reloadPromotionTable();
 		}
 		
 		else if(e.getSource()==this.btnChange) {

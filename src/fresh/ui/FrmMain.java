@@ -40,9 +40,17 @@ public class FrmMain extends JFrame implements ActionListener{
     private JMenuItem System_Recipe = new JMenuItem("菜谱管理");
     private JMenuItem System_Goodbuy = new JMenuItem("采购表管理");
     
+    
+    private JMenu menu_User_order = new JMenu("订单管理");
+    
+    private JMenuItem User_order = new JMenuItem("订单详情");
+    private JMenuItem Order_add = new JMenuItem("创建新的订单");
+    private JMenuItem Order_goods = new JMenuItem("采购商品");
+    
     private JMenu menu_UA = new JMenu("优惠信息");
     private JMenuItem UA_Coupon = new JMenuItem("优惠券信息");
     private JMenuItem UA_Promotion = new JMenuItem("促销信息");
+    private JMenuItem UA_Discount = new JMenuItem("满折信息");
     
 	private FrmLogin dlglogin = null;
 	private JPanel statusBar = new JPanel();
@@ -58,6 +66,8 @@ public class FrmMain extends JFrame implements ActionListener{
 	private JMenuItem JMGoods_Add = new JMenuItem("增加商品");
 	private JMenuItem JMGoods_Change = new JMenuItem("修改商品信息");
 	private JMenuItem JMGoods_Delete = new JMenuItem("删除商品");
+	private JMenuItem JMGoods_pro = new JMenuItem("增加促销活动");
+	private JMenuItem JMGoods_dis = new JMenuItem("增加满折活动");
 	
 	private Button btnFreshSearch = new Button("类别查询");
 	private Button btnGoods_Search = new Button("商品查询");
@@ -199,7 +209,6 @@ public class FrmMain extends JFrame implements ActionListener{
 	}
 	
 	public FrmMain() {
-		this.setExtendedState(Frame.MAXIMIZED_BOTH);
 		JPanel jp = new JPanel();
 		this.setTitle("生鲜网超系统");
 		dlglogin = new FrmLogin(this,"生鲜网超登录系统",true);
@@ -210,7 +219,15 @@ public class FrmMain extends JFrame implements ActionListener{
 			menu_User.add(menuItem_User_person);
 			menuItem_User_person.addActionListener(this);
 			
+			this.menu_User_order.add(this.User_order);
+			User_order.addActionListener(this);
+			this.menu_User_order.add(this.Order_add);
+			Order_add.addActionListener(this);
+			this.menu_User_order.add(this.Order_goods);
+			Order_goods.addActionListener(this);
+			
 			menubar.add(menu_User);
+			menubar.add(this.menu_User_order);
 		}
 		else {
 			FrmAdmin_Hello fh = new FrmAdmin_Hello(this,"欢迎~admin",true);
@@ -224,6 +241,8 @@ public class FrmMain extends JFrame implements ActionListener{
 			menu_Goods.add(JMGoods_Add);
 			menu_Goods.add(JMGoods_Delete);
 			menu_Goods.add(JMGoods_buy);
+			menu_Goods.add(this.JMGoods_pro);
+			menu_Goods.add(this.JMGoods_dis);
 			menu_Admin.add(Admin_ChangPasswd);
 			Admin_ChangPasswd.addActionListener(this);
 			menu_Admin.add(Admin_Cancel);
@@ -248,12 +267,15 @@ public class FrmMain extends JFrame implements ActionListener{
 			this.JMGoods_Delete.addActionListener(this);
 			this.JMGoods_Change.addActionListener(this);
 			this.JMGoods_buy.addActionListener(this);
-			
+			this.JMGoods_pro.addActionListener(this);
+			this.JMGoods_dis.addActionListener(this);
 		}
 		this.menu_UA.add(this.UA_Coupon);
 		this.UA_Coupon.addActionListener(this);
 		this.menu_UA.add(this.UA_Promotion);
 		this.UA_Promotion.addActionListener(this);
+		this.menu_UA.add(this.UA_Discount);
+		this.UA_Discount.addActionListener(this);
 		menubar.add(menu_UA);
 		
 		toolBar.setLayout(new FlowLayout(FlowLayout.LEFT));
@@ -522,5 +544,72 @@ public class FrmMain extends JFrame implements ActionListener{
 			FrmPromotionManager fpm = new FrmPromotionManager(this,"促销信息",true);
 			fpm.setVisible(false);
 		}
-	}	
-}
+		
+		else if(e.getSource()==this.UA_Discount) {
+			FrmDiscountManager fdm = new FrmDiscountManager(this,"满折信息",true);
+			fdm.setVisible(false);
+		}
+		
+		else if(e.getSource()==this.JMGoods_pro) {
+			int i = this.FreshTable.getSelectedRow();
+			int j = this.GoodsTable.getSelectedRow();
+			if(j<0) {
+				JOptionPane.showMessageDialog(null,  "请选择商品","提示",JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			if(JOptionPane.showConfirmDialog(this,"确定增加此商品促销吗？","确认",JOptionPane.YES_NO_OPTION)==JOptionPane.YES_OPTION){
+				String Cn=this.tblGoodsData[j][0].toString();
+				int Goods_num=Integer.parseInt(Cn);
+				try {
+					FrmGoods_pro_add fgb = new FrmGoods_pro_add(this,"促销商品",true,Goods_num);
+					fgb.setVisible(false);
+					if(i>=0) {
+						this.reloadGoodsTable(i);
+					}else {
+						this.reloadGoodsTablebyname();
+					}
+					this.reloadFreshTable();
+				} catch (Exception e1) {
+					JOptionPane.showMessageDialog(null, e1.getMessage(),"错误",JOptionPane.ERROR_MESSAGE);
+				}
+				
+			}
+			this.reloadGoodsTable(i);
+			
+		}
+		
+		else if(e.getSource()==this.JMGoods_dis) {
+			int i = this.FreshTable.getSelectedRow();
+			int j = this.GoodsTable.getSelectedRow();
+			if(j<0) {
+				JOptionPane.showMessageDialog(null,  "请选择商品","提示",JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			if(JOptionPane.showConfirmDialog(this,"确定增加此商品满折吗？","确认",JOptionPane.YES_NO_OPTION)==JOptionPane.YES_OPTION){
+				String Cn=this.tblGoodsData[j][0].toString();
+				int Goods_num=Integer.parseInt(Cn);
+				try {
+					FrmGoods_dis_add fgda = new FrmGoods_dis_add(this,"增加满折商品",true,Goods_num);
+					fgda.setVisible(false);
+					if(i>=0) {
+						this.reloadGoodsTable(i);
+					}else {
+						this.reloadGoodsTablebyname();
+					}
+					this.reloadFreshTable();
+				} catch (Exception e1) {
+					JOptionPane.showMessageDialog(null, e1.getMessage(),"错误",JOptionPane.ERROR_MESSAGE);
+				}
+				
+			}
+			this.reloadGoodsTable(i);
+		}
+		
+		else if(e.getSource()==this.User_order) {
+			FrmMy_Order fmo = new FrmMy_Order(this,"我的订单",true);
+			fmo.setVisible(false);
+		}
+	}
+
+}	
+

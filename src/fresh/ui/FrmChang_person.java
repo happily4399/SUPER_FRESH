@@ -2,8 +2,10 @@ package fresh.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Button;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Frame;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -37,6 +39,10 @@ public class FrmChang_person extends JDialog implements ActionListener{
 	
 	public FrmChang_person(Frame f, String s, boolean b) {
 		super(f,s,b);
+		name = new JTextField(BeanUser.currentloginUser.getUser_name(),20);
+		sex = new JTextField(BeanUser.currentloginUser.getUser_sex(),20);
+		email = new JTextField(BeanUser.currentloginUser.getUser_email(),20);
+		city = new JTextField(BeanUser.currentloginUser.getUser_city(),20);
 		toolBar.setLayout(new FlowLayout(FlowLayout.RIGHT));
 		toolBar.add(this.btnOk);
 		toolBar.add(btnCancel);
@@ -50,6 +56,10 @@ public class FrmChang_person extends JDialog implements ActionListener{
 		workPane.add(labelcity);
 		workPane.add(city);
 		
+		Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
+		int width = 300;
+		int height = 200;
+		this.setBounds((d.width - width)/2, (d.height-height)/2, width, height);
 		this.getContentPane().add(workPane, BorderLayout.CENTER);
 		this.setSize(300, 200);
 		this.btnCancel.addActionListener(this);

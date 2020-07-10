@@ -245,7 +245,7 @@ public class Goods_orderManager {
 			pst.setInt(2, Ship_num);
 			pst.setInt(3, Coupon_num);
 			pst.setDate(4, new java.sql.Date(start_date.getTime()));
-			pst.setString(5, "下单");
+			pst.setString(5, "购物车中");
 			pst.execute();
 			pst.close();
 		}catch (SQLException e) {

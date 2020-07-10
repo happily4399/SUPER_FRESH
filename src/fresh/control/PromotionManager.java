@@ -27,21 +27,24 @@ public class PromotionManager {
 		SimpleDateFormat sdf2= new SimpleDateFormat("yyyy-MM-dd");
 		java.util.Date start_date = new Date();
 		java.util.Date end_date = new Date();
+		java.util.Date today = new Date();
 		BeanGoods bg = (new GoodsManager()).loadbyGoodsnum(goods_num);
 		if(Pro_price > bg.getGoods_price()) throw new Exception("太黑心啦！促销价格不可超过原价");
 		if(Pro_count > bg.getGoods_count()) throw new Exception("不够啦！库存数量小于促销数量");
 		start_date = sdf2.parse(Pro_start_date);
 		end_date = sdf2.parse(Pro_end_date);
 		
+		if(end_date.getTime() < today.getTime()) throw new Exception("结束日期不得早于今天");
+		if(start_date.getTime() > end_date.getTime()) throw new Exception("结束日期不可早于开始日期");
 		try {
 			conn = DBUtil.getConnection();
 			String sql="SELECT *\r\n" + 
 					"FROM promotion\r\n" + 
-					"WHERE goods_num=?";
+					"WHERE goods_num=? AND Pro_end_date > CURRENT_TIME ";
 			java.sql.PreparedStatement pst =conn.prepareStatement(sql);
 			pst.setInt(1, goods_num);
 			java.sql.ResultSet rs = pst.executeQuery();
-			if(rs.next()) throw new Exception("商品已有促销信息，不可同时两个促销");
+			if(rs.next()) throw new Exception("商品此时已有促销信息，不可同时两个促销");
 			rs.close();
 			pst.close();
 			
@@ -329,7 +332,7 @@ public class PromotionManager {
 			conn = DBUtil.getConnection();
 			String sql = "Select *\r\n" + 
 					"from promotion\r\n" + 
-					"where goods_num=?";
+					"where goods_num=? and Pro_end_date > CURRENT_TIME";
 			java.sql.PreparedStatement pst = conn.prepareStatement(sql);
 			pst.setInt(1, Goods_num);
 			java.sql.ResultSet rs = pst.executeQuery();
@@ -420,7 +423,9 @@ public class PromotionManager {
 		pm.LoadByPro_Num(Pro_num);
 		SimpleDateFormat sdf2= new SimpleDateFormat("yyyy-MM-dd");
 		java.util.Date end_date = new Date();
+		java.util.Date today = new Date();
 		end_date = sdf2.parse(Pro_end_date);
+		if(end_date.getTime() < today.getTime()) throw new Exception("结束日期不得早于今天");
 		try {
 			conn = DBUtil.getConnection();
 			String sql = "UPDATE promotion\r\n" + 

@@ -2,8 +2,10 @@ package fresh.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Button;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Frame;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -40,6 +42,10 @@ public class FrmFresh_add extends JDialog implements ActionListener {
 		workPane.add(labeldes);
 		workPane.add(edtdes);
 		
+		Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
+		int width = 300;
+		int height = 150;
+		this.setBounds((d.width - width)/2, (d.height-height)/2, width, height);
 		this.getContentPane().add(workPane, BorderLayout.CENTER);
 		this.setSize(300, 150);
 		this.btnCancel.addActionListener(this);

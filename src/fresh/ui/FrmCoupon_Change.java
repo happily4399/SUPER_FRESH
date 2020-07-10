@@ -2,7 +2,9 @@ package fresh.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Button;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
@@ -63,6 +65,10 @@ public class FrmCoupon_Change extends JDialog implements ActionListener {
 			workPane.add(labelend_date);
 			workPane.add(edtend_date);
 			
+			Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
+			int width = 300;
+			int height = 230;
+			this.setBounds((d.width - width)/2, (d.height-height)/2, width, height);
 			this.getContentPane().add(workPane, BorderLayout.CENTER);
 			this.setSize(300, 230);
 			this.btnCancel.addActionListener(this);

@@ -346,7 +346,7 @@ public class GoodsManager {
 	public void ChangeGoods_name(int goods_num,String goods_name) throws Exception {
 		if("".equals(String.valueOf(goods_num))) throw new Exception("商品编号不可为空");
 		GoodsManager gm = new GoodsManager();
-		if(gm.loadbyGoodsname(goods_name)!=null) throw new Exception("商品名称已重复");
+		if(gm.loadbyGoodsname(goods_name).getGoods_num()!=0) throw new Exception("商品名称已重复");
 		Connection conn = null;
 		try {
 			conn = DBUtil.getConnection();
@@ -423,7 +423,7 @@ public class GoodsManager {
 		try {
 			conn = DBUtil.getConnection();
 			String sql = "UPDATE goods\r\n" + 
-					"SET goods_des=?\r\n" + 
+					"SET goods_det=?\r\n" + 
 					"WHERE goods_num=?";
 			java.sql.PreparedStatement pst = conn.prepareStatement(sql);
 			pst.setString(1, goods_des);

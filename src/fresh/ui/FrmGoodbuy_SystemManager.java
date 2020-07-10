@@ -60,7 +60,7 @@ public class FrmGoodbuy_SystemManager extends JDialog implements ActionListener{
 			this.GoodbuyTable.repaint();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, e.getMessage(),"´íÎó",JOptionPane.ERROR_MESSAGE);
 		}
 	}
 	
@@ -82,7 +82,7 @@ public class FrmGoodbuy_SystemManager extends JDialog implements ActionListener{
 			this.GoodbuyTable.repaint();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, e.getMessage(),"´íÎó",JOptionPane.ERROR_MESSAGE);
 		}
 	}
 	
