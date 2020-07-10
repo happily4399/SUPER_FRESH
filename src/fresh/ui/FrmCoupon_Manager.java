@@ -31,9 +31,14 @@ public class FrmCoupon_Manager extends JDialog implements ActionListener{
 	private Button btnChange = new Button("修改优惠券信息");
 	private Button btnAdd = new Button("增加优惠券");
 	private Button btnDelete = new Button("删除优惠券");
-	private Button btnSearch = new Button("查询");
+	private Button btnDeletebytime = new Button("删除过期优惠券");
+	private Button btnSearch = new Button("查询(all)");
+	private Button btnScr_Search = new Button("查询(可用)");
+	private Button btnScreen = new Button("筛选可用优惠券");
+	
 	private JTextField edtKeyword = new JTextField(10);
 	private JLabel Labelname = new JLabel("根据优惠券名查询：");
+	
 	private Object tblTitle[]={"优惠券编号","优惠券名称","适用金额","减免金额","可使用时间","过期时间"};
 	private Object tblData[][];
 	DefaultTableModel tablmod=new DefaultTableModel();
@@ -42,6 +47,28 @@ public class FrmCoupon_Manager extends JDialog implements ActionListener{
 		try {
 			CouponManager cm = new CouponManager();
 			List<BeanCoupon> coupon= cm.loadAll();
+			tblData =new Object[coupon.size()][6];
+			for(int i=0;i<coupon.size();i++){
+				tblData[i][0]=coupon.get(i).getCoupon_num();
+				tblData[i][1]=coupon.get(i).getCoupon_con();
+				tblData[i][2]=coupon.get(i).getApp_amount();
+				tblData[i][3]=coupon.get(i).getDed_amount();
+				tblData[i][4]=coupon.get(i).getCoupon_start_date();
+				tblData[i][5]=coupon.get(i).getCoupon_end_date();
+			}
+			tablmod.setDataVector(tblData,tblTitle);
+			this.CouponTable.validate();
+			this.CouponTable.repaint();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	private void reloadScreenTable(){
+		try {
+			CouponManager cm = new CouponManager();
+			List<BeanCoupon> coupon= cm.loadScreen();
 			tblData =new Object[coupon.size()][6];
 			for(int i=0;i<coupon.size();i++){
 				tblData[i][0]=coupon.get(i).getCoupon_num();
@@ -82,20 +109,57 @@ public class FrmCoupon_Manager extends JDialog implements ActionListener{
 		}
 	}
 	
+	private void reloadTablebytime(){
+		try {
+			CouponManager cm = new CouponManager();
+			List<BeanCoupon> coupon= cm.loadByCoupon_nametime(this.edtKeyword.getText());
+			tblData =new Object[coupon.size()][6];
+			for(int i=0;i<coupon.size();i++){
+				tblData[i][0]=coupon.get(i).getCoupon_num();
+				tblData[i][1]=coupon.get(i).getCoupon_con();
+				tblData[i][2]=coupon.get(i).getApp_amount();
+				tblData[i][3]=coupon.get(i).getDed_amount();
+				tblData[i][4]=coupon.get(i).getCoupon_start_date();
+				tblData[i][5]=coupon.get(i).getCoupon_end_date();
+			}
+			tablmod.setDataVector(tblData,tblTitle);
+			this.CouponTable.validate();
+			this.CouponTable.repaint();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	public FrmCoupon_Manager(Frame f, String s, boolean b) {
 		super(f, s, b);
 		toolBar.setLayout(new FlowLayout(FlowLayout.LEFT));
-		toolBar.add(btnAdd);
-		toolBar.add(btnChange);
-		toolBar.add(btnDelete);
+		this.getContentPane().add(new JScrollPane(this.CouponTable), BorderLayout.CENTER);
+		if(BeanUser.currentloginUser==null) {
+			toolBar.add(btnAdd);
+			toolBar.add(btnChange);
+			toolBar.add(btnDelete);
+			toolBar.add(btnDeletebytime);
+			toolBar.add(btnScreen);
+			this.btnAdd.addActionListener(this);
+			this.btnDelete.addActionListener(this);
+			this.btnChange.addActionListener(this);
+			this.btnDeletebytime.addActionListener(this);
+			this.btnScreen.addActionListener(this);
+			
+			this.reloadCouponTable();
+		}else {
+			
+			this.reloadScreenTable();
+		}
 		toolBar.add(Labelname);
 		toolBar.add(edtKeyword);
-		toolBar.add(btnSearch);
+		toolBar.add(btnScr_Search);
+		if(BeanUser.currentloginUser==null) {
+			toolBar.add(btnSearch);
+			this.btnSearch.addActionListener(this);
+		}
 		this.getContentPane().add(toolBar, BorderLayout.NORTH);
-		//提取现有数据
-		this.reloadCouponTable();
-		this.getContentPane().add(new JScrollPane(this.CouponTable), BorderLayout.CENTER);
-		
 		// 屏幕居中显示
 		this.setSize(1000, 600);
 		double width = Toolkit.getDefaultToolkit().getScreenSize().getWidth();
@@ -104,11 +168,7 @@ public class FrmCoupon_Manager extends JDialog implements ActionListener{
 				(int) (height - this.getHeight()) / 2);
 
 		this.validate();
-		
-		this.btnAdd.addActionListener(this);
-		this.btnDelete.addActionListener(this);
-		this.btnChange.addActionListener(this);
-		this.btnSearch.addActionListener(this);
+		this.btnScr_Search.addActionListener(this);
 		this.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
 				//System.exit(0);
@@ -121,6 +181,10 @@ public class FrmCoupon_Manager extends JDialog implements ActionListener{
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource()==this.btnSearch) {
 			this.reloadTable();
+		}
+		
+		else if(e.getSource()==this.btnScr_Search) {
+			this.reloadTablebytime();
 		}
 		
 		else if(e.getSource()==this.btnDelete){
@@ -163,6 +227,20 @@ public class FrmCoupon_Manager extends JDialog implements ActionListener{
 					JOptionPane.showMessageDialog(null, e1.getMessage(),"错误",JOptionPane.ERROR_MESSAGE);
 				}
 				
+			}
+			this.reloadCouponTable();
+		}
+		
+		else if(e.getSource()==this.btnScreen) {
+			this.reloadScreenTable();
+		}
+		
+		else if(e.getSource()==this.btnDeletebytime) {
+			try {
+				CouponManager cm = new CouponManager();
+				cm.Deletebytime();
+			} catch (Exception e1) {
+				JOptionPane.showMessageDialog(null, e1.getMessage(),"错误",JOptionPane.ERROR_MESSAGE);
 			}
 			this.reloadCouponTable();
 		}

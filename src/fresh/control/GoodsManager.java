@@ -16,6 +16,8 @@ public class GoodsManager {
 		if("".equals(goods_name)) throw new Exception("商品名不可为空");
 		if("".equals(String.valueOf(goods_price))) throw new Exception("商品价格不可为空");
 		if("".equals(String.valueOf(goods_count))) throw new Exception("商品数量不可为空");
+		GoodsManager gm = new GoodsManager();
+		if(gm.loadbyGoodsname(goods_name)!=null) throw new Exception("商品名称已重复");
 		
 		Connection conn = null;
 		try {
@@ -145,6 +147,43 @@ public class GoodsManager {
 			java.sql.ResultSet rs = pst.executeQuery();
 			if(!rs.next()) throw new Exception("商品编号对应的商品不存在");
 			else {
+				bg.setGoods_num(rs.getInt(1));
+				bg.setCate_gory_number(rs.getInt(2));
+				bg.setGoods_name(rs.getString(3));
+				bg.setGoods_price(rs.getFloat(4));
+				bg.setVip_price(rs.getFloat(5));
+				bg.setGoods_count(rs.getInt(6));
+				bg.setGoods_spe(rs.getString(7));
+				bg.setGoods_det(rs.getString(8));
+				bg.setSales_count(rs.getInt(9));
+			}
+			pst.close();
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}finally{
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO 自动生成的 catch 块
+				e.printStackTrace();
+			}
+		}
+		return bg;
+	}
+	
+	public BeanGoods loadbyGoodsname (String goods_name) throws Exception {
+		if("".equals(String.valueOf(goods_name))) throw new Exception("商品名称不可为空");
+		BeanGoods bg = new BeanGoods();
+		Connection conn = null;
+		try {
+			conn = DBUtil.getConnection();
+			String sql = "SELECT *\r\n" + 
+					"FROM goods\r\n" + 
+					"WHERE goods_name=?";
+			java.sql.PreparedStatement pst = conn.prepareStatement(sql);
+			pst.setString(1, goods_name);
+			java.sql.ResultSet rs = pst.executeQuery();
+			if(rs.next()) {
 				bg.setGoods_num(rs.getInt(1));
 				bg.setCate_gory_number(rs.getInt(2));
 				bg.setGoods_name(rs.getString(3));
@@ -306,6 +345,8 @@ public class GoodsManager {
 	
 	public void ChangeGoods_name(int goods_num,String goods_name) throws Exception {
 		if("".equals(String.valueOf(goods_num))) throw new Exception("商品编号不可为空");
+		GoodsManager gm = new GoodsManager();
+		if(gm.loadbyGoodsname(goods_name)!=null) throw new Exception("商品名称已重复");
 		Connection conn = null;
 		try {
 			conn = DBUtil.getConnection();

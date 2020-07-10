@@ -79,6 +79,41 @@ public class Good_buyManager {
 		return result;
 	}
 	
+	public List<BeanGood_buy> LoadbyState(String state) throws Exception {
+		List<BeanGood_buy> result = new ArrayList<BeanGood_buy>();
+		Connection conn = null;
+		try {
+			conn = DBUtil.getConnection();
+			String sql="SELECT *\r\n" + 
+					"FROM good_buy\r\n" + 
+					"WHERE buy_state=?";
+			java.sql.PreparedStatement pst = conn.prepareStatement(sql);
+			pst.setString(1, state);
+			java.sql.ResultSet rs = pst.executeQuery();
+			while(rs.next()) {
+				BeanGood_buy bg = new BeanGood_buy();
+				bg.setBuy_num(rs.getInt(1));
+				bg.setGoods_num(rs.getInt(2));
+				bg.setAdmin_num(rs.getString(3));
+				bg.setBuy_count(rs.getInt(4));
+				bg.setBuy_state(rs.getString(5));
+				result.add(bg);
+			}
+			pst.close();
+			rs.close();
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}finally{
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO 自动生成的 catch 块
+				e.printStackTrace();
+			}
+		}
+		return result;
+	}
+	
 	public void ChangeGoods_CountByState(int buy_num,int goods_num,String buy_state) throws Exception {
 		Good_buyManager gbm = new Good_buyManager();
 		GoodsManager gm = new GoodsManager();
@@ -91,6 +126,34 @@ public class Good_buyManager {
 			}
 		}catch (Exception e) {
 			e.printStackTrace();
+		}
+	}
+	
+	public void ChangeState(int buy_num,String buy_state) throws Exception {
+		Good_buyManager gbm = new Good_buyManager();
+		GoodsManager gm = new GoodsManager();
+		if("".equals(String.valueOf(buy_num))) throw new Exception("采购编号不可为空");
+		if("".equals(String.valueOf(buy_state))) throw new Exception("采购状态不可为空");
+		Connection conn = null;
+		try {
+			conn =DBUtil.getConnection();
+			String sql = "UPDATE good_buy\r\n" + 
+					"SET buy_state=?\r\n" + 
+					"WHERE buy_num=?";
+			java.sql.PreparedStatement pst = conn.prepareStatement(sql);
+			pst.setString(1, buy_state);
+			pst.setInt(2, buy_num);
+			pst.execute();
+			pst.close();
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}finally{
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO 自动生成的 catch 块
+				e.printStackTrace();
+			}
 		}
 	}
 	

@@ -5,6 +5,8 @@ import java.awt.Button;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -73,12 +75,16 @@ public class FrmCoupon_Change extends JDialog implements ActionListener {
 			if(e.getSource()==this.btnCancel)
 				this.setVisible(false);
 			else if(e.getSource()==this.btnOk){
+				SimpleDateFormat sdf2= new SimpleDateFormat("yyyy-MM-dd");
 				String Coupon_con = edtCoupon_con.getText();
 				float app_amount = Float.parseFloat(edtapp_amount.getText());
 				float Ded_amount = Float.parseFloat(edtded_amount.getText());
 				String Coupon_start_date = edtstart_date.getText();
 				String Coupon_end_date = edtend_date.getText();
 				try {
+					java.util.Date start_date = sdf2.parse(Coupon_start_date);
+					java.util.Date end_date = sdf2.parse(Coupon_end_date);
+					if(end_date.getTime() < start_date.getTime()) throw new Exception("结束日期不可早于开始日期");
 					CouponManager cm = new CouponManager();
 					cm.ChangeCoupon_con(Coupon_num, Coupon_con);
 					cm.ChangeCoupon_app_amount(Coupon_num, app_amount);

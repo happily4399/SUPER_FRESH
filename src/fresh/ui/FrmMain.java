@@ -37,9 +37,12 @@ public class FrmMain extends JFrame implements ActionListener{
     private JMenu menu_Admin_System=new JMenu("系统管理");
     
     private JMenuItem System_User=new JMenuItem("用户管理");
-    private JMenuItem System_Coupon = new JMenuItem("优惠券管理");
     private JMenuItem System_Recipe = new JMenuItem("菜谱管理");
     private JMenuItem System_Goodbuy = new JMenuItem("采购表管理");
+    
+    private JMenu menu_UA = new JMenu("优惠信息");
+    private JMenuItem UA_Coupon = new JMenuItem("优惠券信息");
+    private JMenuItem UA_Promotion = new JMenuItem("促销信息");
     
 	private FrmLogin dlglogin = null;
 	private JPanel statusBar = new JPanel();
@@ -231,8 +234,6 @@ public class FrmMain extends JFrame implements ActionListener{
 			
 			menu_Admin_System.add(System_User);
 			System_User.addActionListener(this);
-			menu_Admin_System.add(System_Coupon);
-			System_Coupon.addActionListener(this);
 			menu_Admin_System.add(System_Recipe);
 			System_Recipe.addActionListener(this);
 			menu_Admin_System.add(System_Goodbuy);
@@ -249,6 +250,11 @@ public class FrmMain extends JFrame implements ActionListener{
 			this.JMGoods_buy.addActionListener(this);
 			
 		}
+		this.menu_UA.add(this.UA_Coupon);
+		this.UA_Coupon.addActionListener(this);
+		this.menu_UA.add(this.UA_Promotion);
+		this.UA_Promotion.addActionListener(this);
+		menubar.add(menu_UA);
 		
 		toolBar.setLayout(new FlowLayout(FlowLayout.LEFT));
 		toolBar.add(LabelFreshname);
@@ -338,8 +344,8 @@ public class FrmMain extends JFrame implements ActionListener{
 			fum.setVisible(false);
 		}
 		
-		else if(e.getSource()==this.System_Coupon) {
-			FrmCoupon_Manager fcm = new FrmCoupon_Manager(this,"优惠券管理界面",true);
+		else if(e.getSource()==this.UA_Coupon) {
+			FrmCoupon_Manager fcm = new FrmCoupon_Manager(this,"优惠券信息界面",true);
 			fcm.setVisible(false);
 		}
 		else if(e.getSource()==this.btnFreshSearch) {
@@ -506,9 +512,15 @@ public class FrmMain extends JFrame implements ActionListener{
 			}
 			this.reloadGoodsTable(i);
 		}
+		
 		else if(e.getSource()==this.System_Goodbuy) {
 			FrmGoodbuy_SystemManager fgsm = new FrmGoodbuy_SystemManager(this,"采购详情表",true);
 			fgsm.setVisible(false);
+		}
+		
+		else if(e.getSource()==this.UA_Promotion) {
+			FrmPromotionManager fpm = new FrmPromotionManager(this,"促销信息",true);
+			fpm.setVisible(false);
 		}
 	}	
 }

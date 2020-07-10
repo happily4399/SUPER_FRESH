@@ -16,6 +16,39 @@ public class CouponManager {
 		cm.Delete(6);
 	}
 	
+	public List<BeanCoupon> loadScreen() throws Exception {
+		List<BeanCoupon> result = new ArrayList<BeanCoupon>();
+		Connection conn = null;
+		try {
+			conn = DBUtil.getConnection();
+			String sql = "SELECT *\r\n" + 
+					"FROM coupon\r\n" + 
+					"WHERE Coupon_start_date < CURRENT_TIMESTAMP() And Coupon_end_date > CURRENT_TIMESTAMP()";
+			java.sql.PreparedStatement pst = conn.prepareStatement(sql);
+			java.sql.ResultSet rs = pst.executeQuery();
+			while(rs.next()) {
+				BeanCoupon bc = new BeanCoupon();
+				bc.setCoupon_num(rs.getInt(1));
+				bc.setCoupon_con(rs.getString(2));
+				bc.setApp_amount(rs.getFloat(3));
+				bc.setDed_amount(rs.getFloat(4));
+				bc.setCoupon_start_date(rs.getTimestamp(5));
+				bc.setCoupon_end_date(rs.getTimestamp(6));
+				result.add(bc);
+			}
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}finally{
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO 自动生成的 catch 块
+				e.printStackTrace();
+			}
+		}
+		return result;
+	}
+	
 	public BeanCoupon loadByCoupon_num(int Coupon_num) throws Exception {
 		if("".equals(String.valueOf(Coupon_num))) throw new Exception("优惠券编号不能为空");
 		BeanCoupon bc = new BeanCoupon();
@@ -58,6 +91,39 @@ public class CouponManager {
 			String sql = "SELECT *\r\n" + 
 					"FROM Coupon\r\n" + 
 					"WHere Coupon_con like'%"+Coupon_name+"%'";
+			java.sql.Statement st = conn.createStatement();
+			java.sql.ResultSet rs = st.executeQuery(sql);
+			while(rs.next()) {
+				BeanCoupon bc = new BeanCoupon();
+				bc.setCoupon_num(rs.getInt(1));
+				bc.setCoupon_con(rs.getString(2));
+				bc.setApp_amount(rs.getFloat(3));
+				bc.setDed_amount(rs.getFloat(4));
+				bc.setCoupon_start_date(rs.getTimestamp(5));
+				bc.setCoupon_end_date(rs.getTimestamp(6));
+				result.add(bc);
+			}
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}finally{
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO 自动生成的 catch 块
+				e.printStackTrace();
+			}
+		}
+		return result;
+	}
+	
+	public List<BeanCoupon> loadByCoupon_nametime(String Coupon_name) throws Exception {
+		List<BeanCoupon> result = new ArrayList<BeanCoupon>();
+		Connection conn = null;
+		try {
+			conn = DBUtil.getConnection();
+			String sql = "SELECT *\r\n" + 
+					"FROM Coupon\r\n" + 
+					"WHere Coupon_con like'%"+Coupon_name+"%' AND Coupon_start_date < CURRENT_TIMESTAMP() And Coupon_end_date > CURRENT_TIMESTAMP()";
 			java.sql.Statement st = conn.createStatement();
 			java.sql.ResultSet rs = st.executeQuery(sql);
 			while(rs.next()) {
@@ -165,6 +231,28 @@ public class CouponManager {
 					"WHERE coupon_num=?";
 			java.sql.PreparedStatement pst = conn.prepareStatement(sql);
 			pst.setInt(1, Coupon_num);
+			pst.execute();
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}finally{
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO 自动生成的 catch 块
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public void Deletebytime() throws Exception {
+		Goods_orderManager gom = new Goods_orderManager();
+		Connection conn = null;
+		try {
+			conn = DBUtil.getConnection();
+			String sql = "DELETE \r\n" + 
+					"FROM coupon\r\n" + 
+					"WHERE Coupon_end_date > CURRENT_TIMESTAMP()";
+			java.sql.PreparedStatement pst = conn.prepareStatement(sql);
 			pst.execute();
 		}catch (SQLException e) {
 			e.printStackTrace();

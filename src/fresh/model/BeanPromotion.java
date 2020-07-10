@@ -3,11 +3,18 @@ package fresh.model;
 public class BeanPromotion {
 	private int Pro_num;
 	private int goods_num;
+	private String Pro_name;
 	private float Pro_price;
 	private int Pro_count;
 	private java.util.Date Pro_start_date;
 	private java.util.Date Pro_end_date;
 	
+	public String getPro_name() {
+		return Pro_name;
+	}
+	public void setPro_name(String pro_name) {
+		Pro_name = pro_name;
+	}
 	public int getPro_num() {
 		return Pro_num;
 	}

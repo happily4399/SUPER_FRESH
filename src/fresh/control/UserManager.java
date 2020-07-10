@@ -438,7 +438,7 @@ public class UserManager {
 	}
 	
 	public BeanUser loadbyUser_num(int User_num) throws Exception {
-		if("".equals(User_num)) throw new Exception("用户编号不能为空");
+		if("".equals(String.valueOf(User_num))) throw new Exception("用户编号不能为空");
 		BeanUser bu = new BeanUser();
 		Connection conn = null;
 		try {
