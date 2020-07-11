@@ -202,7 +202,7 @@ public class FrmPromotionManager extends JDialog implements ActionListener{
 			}
 			if(JOptionPane.showConfirmDialog(this,"确定删除促销吗？","确认",JOptionPane.YES_NO_OPTION)==JOptionPane.YES_OPTION){
 				try {
-					int Pro_num=this.tblData[i][0].hashCode();
+					int Pro_num = Integer.parseInt(this.tblData[i][0].toString());
 					pm.DELETE(Pro_num);
 					this.reloadPromotionTable();
 				} catch (Exception e1) {

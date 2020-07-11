@@ -6,6 +6,7 @@ import javax.swing.table.DefaultTableModel;
 import fresh.control.AdminManager;
 import fresh.control.Fresh_categoryManager;
 import fresh.control.GoodsManager;
+import fresh.control.Goods_orderManager;
 import fresh.model.BeanAdmin;
 import fresh.model.BeanFresh_category;
 import fresh.model.BeanGoods;
@@ -608,6 +609,17 @@ public class FrmMain extends JFrame implements ActionListener{
 		else if(e.getSource()==this.User_order) {
 			FrmMy_Order fmo = new FrmMy_Order(this,"我的订单",true);
 			fmo.setVisible(false);
+		}
+		
+		else if(e.getSource()==this.Order_add) {
+			try {
+				Goods_orderManager gom = new Goods_orderManager();
+				gom.add(BeanUser.currentloginUser.getUser_num());
+				FrmMy_Order fmo = new FrmMy_Order(this,"我的订单",true);
+				fmo.setVisible(false);
+			}catch (Exception e1) {
+				JOptionPane.showMessageDialog(null, e1.getMessage(),"错误",JOptionPane.ERROR_MESSAGE);
+			}
 		}
 	}
 

@@ -22,11 +22,14 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 import fresh.control.DiscountManager;
+import fresh.control.Good_buyManager;
 import fresh.control.GoodsManager;
 import fresh.control.Goods_discountManager;
 import fresh.control.Goods_orderManager;
 import fresh.control.Order_detailManager;
+import fresh.control.PromotionManager;
 import fresh.model.BeanDiscount_infor;
+import fresh.model.BeanGoods;
 import fresh.model.BeanGoods_discount;
 import fresh.model.BeanGoods_order;
 import fresh.model.BeanOrder_detail;
@@ -36,8 +39,12 @@ public class FrmMy_Order extends JDialog implements ActionListener {
 	private JPanel toolBar = new JPanel();
 	
 	private JComboBox cmbbuytype=null;
-	String[] listData ={"购物车中","下单","在途","已送达"};
+	String[] listData ={"购物车中","下单","已送达","退货"};
 	private Button btnChange = new Button("修改订单状态");
+	private Button btnCh = new Button("修改订单信息");
+	private Button btnGoodCh = new Button("修改商品信息");
+	private Button btnDelete = new Button("删除订单");
+	private Button btnDeletebyGood = new Button("删除商品");
 	
 	private Object Good_ordertblTitle[]={"订单编号","地址编号","优惠券编号","原始金额","结算金额","要求送达时间","订单状态"};
 	private Object order_tblTitle[]= {"满折编号","商品名称","数量","折扣","最终价格"};
@@ -101,6 +108,9 @@ public class FrmMy_Order extends JDialog implements ActionListener {
 		this.cmbbuytype = new JComboBox(listData);
 		toolBar.add(cmbbuytype);
 		toolBar.add(btnChange);
+		toolBar.add(btnCh);
+		toolBar.add(btnDelete);
+		toolBar.add(btnDeletebyGood);
 		
 		toolBar.setLayout(new FlowLayout(FlowLayout.LEFT));
 		this.getContentPane().add(toolBar, BorderLayout.NORTH);
@@ -127,6 +137,9 @@ public class FrmMy_Order extends JDialog implements ActionListener {
 
 		this.validate();
 		this.btnChange.addActionListener(this);
+		this.btnCh.addActionListener(this);
+		this.btnDelete.addActionListener(this);
+		this.btnDeletebyGood.addActionListener(this);
 		this.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
 				//System.exit(0);
@@ -137,7 +150,159 @@ public class FrmMy_Order extends JDialog implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO 自动生成的方法存根
+		if(e.getSource()==this.btnChange) {
+			if(e.getSource()==this.btnChange) {
+				int n = this.cmbbuytype.getSelectedIndex();
+				int i = this.Good_orderTable.getSelectedRow();
+				String state = this.cmbbuytype.getSelectedItem().toString();
+				if(n<0) {
+					JOptionPane.showMessageDialog(null,  "请选择状态","提示",JOptionPane.ERROR_MESSAGE);
+				}
+				if(i<0) {
+					JOptionPane.showMessageDialog(null,  "请选择订单表","提示",JOptionPane.ERROR_MESSAGE);
+				}
+				String on = this.Good_ordertblData[i][0].toString();
+				int order_num = Integer.parseInt(on);
+				GoodsManager gm = new GoodsManager();
+				List<BeanGoods> bg = null;
+				Order_detailManager odm = new Order_detailManager();
+				Goods_orderManager gom = new Goods_orderManager();
+				if("退货".equals(this.Good_ordertblData[i][6].toString())) {
+						JOptionPane.showMessageDialog(null, "商品已退货，无法更改","错误",JOptionPane.ERROR_MESSAGE);
+				}else {
+					try {
+						List<BeanOrder_detail> bod = odm.loadbyOrder_num(order_num);
+						if(this.cmbbuytype.getSelectedItem().toString()=="下单") {
+							if("0".equals(Good_ordertblData[i][1].toString())) throw new Exception("请输入地址编号");
+							if("".equals(Good_ordertblData[i][5].toString())) throw new Exception("请输入要求送达时间");
+							for(int j=0;i<bod.size();j++) {
+								gm.SubGoods_count(bod.get(j).getGoods_num(), bod.get(j).getOrder_count());
+							}
+							gom.reload_price(order_num, gom.LoadbyOrder_num(order_num).getCoupon_num());
+							gom.ChangePeisong(order_num);
+							this.reloadGood_orderTable();
+						}
+						
+						else if(this.cmbbuytype.getSelectedItem().toString()=="已送达") {
+							gom.ChangeSongda(order_num);
+							this.reloadGood_orderTable();
+						}
+						
+						else if(this.cmbbuytype.getSelectedItem().toString()=="退货") {
+							for(int j=0;i<bod.size();j++) {
+								gm.AddGoods_count(bod.get(j).getGoods_num(), bod.get(j).getOrder_count());
+							}
+							gom.ChangeTuihuo(order_num);
+							this.reloadGood_orderTable();
+						}
+					}catch(Exception e1) {
+						JOptionPane.showMessageDialog(null, e1.getMessage(),"错误",JOptionPane.ERROR_MESSAGE);
+					}
+				}
+				this.reloadGood_orderTable();
+		}
+       }
+		else if(e.getSource()==this.btnCh) {
+			int i = this.Good_orderTable.getSelectedRow();
+			if(i<0) {
+				JOptionPane.showMessageDialog(null,  "请选择订单","提示",JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			if(JOptionPane.showConfirmDialog(this,"确定更改此订单信息吗？","确认",JOptionPane.YES_NO_OPTION)==JOptionPane.YES_OPTION){
+				String pn=this.Good_ordertblData[i][0].toString();
+				int order_num=Integer.parseInt(pn);
+				try {
+					if(!"购物车中".equals(this.Good_ordertblData[i][6].toString())) throw new Exception("无法修改此订单信息");
+					new FrmMy_order_change(this,"修改订单信息",true,order_num);
+					this.reloadGood_orderTable();
+				} catch (Exception e1) {
+					JOptionPane.showMessageDialog(null, e1.getMessage(),"错误",JOptionPane.ERROR_MESSAGE);
+				}
+				
+			}
+			this.reloadGood_orderTable();
+		}
 		
-	}
-	
+		else if(e.getSource()==this.btnDelete){
+			int i = this.Good_orderTable.getSelectedRow();
+			Goods_orderManager gom = new Goods_orderManager();
+			Order_detailManager odm = new Order_detailManager();
+			if(i<0) {
+				JOptionPane.showMessageDialog(null,  "请选择订单","提示",JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			if(JOptionPane.showConfirmDialog(this,"确定删除订单吗？","确认",JOptionPane.YES_NO_OPTION)==JOptionPane.YES_OPTION){
+				try {
+					int order_num=Integer.parseInt(this.Good_ordertblData[i][0].toString());
+					if(odm.loadbyOrder_num(order_num).size()!=0) {
+						odm.Delete(order_num);
+					}
+					gom.Delete(order_num);
+					this.reloadGood_orderTable();
+				} catch (Exception e1) {
+					JOptionPane.showMessageDialog(null, e1.getMessage(),"错误",JOptionPane.ERROR_MESSAGE);
+				}
+				
+			}
+		}
+		
+		else if(e.getSource()==this.btnDeletebyGood) {
+			int i = this.Good_orderTable.getSelectedRow();
+			int j = this.order_Table.getSelectedRow();
+			Goods_orderManager gom = new Goods_orderManager();
+			Order_detailManager odm = new Order_detailManager();
+			if(i<0) {
+				JOptionPane.showMessageDialog(null,  "请选择订单","提示",JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			if(j<0) {
+				JOptionPane.showMessageDialog(null,  "请选择商品","提示",JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			if(JOptionPane.showConfirmDialog(this,"确定删除商品吗？","确认",JOptionPane.YES_NO_OPTION)==JOptionPane.YES_OPTION){
+				try {
+					GoodsManager gm = new GoodsManager();
+					int order_num=Integer.parseInt(this.Good_ordertblData[i][0].toString());
+					String Good_name = this.order_tblData[j][1].toString();
+					int Good_num = gm.loadbyGoodsname(Good_name).getGoods_num();
+					odm.Delete(order_num, Good_num);
+					gom.reload_price(order_num, gom.LoadbyOrder_num(order_num).getCoupon_num());
+					this.reloadGood_orderTable();
+					this.reloadOrderTable(i);
+				} catch (Exception e1) {
+					JOptionPane.showMessageDialog(null, e1.getMessage(),"错误",JOptionPane.ERROR_MESSAGE);
+				}
+				
+			}
+		}
+		
+		else if(e.getSource()==this.btnGoodCh) {
+			int i = this.Good_orderTable.getSelectedRow();
+			int j = this.order_Table.getSelectedRow();
+			Goods_orderManager gom = new Goods_orderManager();
+			Order_detailManager odm = new Order_detailManager();
+			if(i<0) {
+				JOptionPane.showMessageDialog(null,  "请选择商品","提示",JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			if(JOptionPane.showConfirmDialog(this,"确定更改此商品信息吗？","确认",JOptionPane.YES_NO_OPTION)==JOptionPane.YES_OPTION){
+				try {
+					GoodsManager gm = new GoodsManager();
+					int order_num=Integer.parseInt(this.Good_ordertblData[i][0].toString());
+					String Good_name = this.order_tblData[j][1].toString();
+					int Good_num = gm.loadbyGoodsname(Good_name).getGoods_num();
+					if(!"购物车中".equals(this.Good_ordertblData[i][6].toString())) throw new Exception("无法修改此商品信息");
+					new FrmMy_Change(this,"修改商品信息",true,order_num,Good_num);
+					gom.reload_price(order_num, gom.LoadbyOrder_num(order_num).getCoupon_num());
+					this.reloadGood_orderTable();
+					this.reloadOrderTable(i);
+					
+				} catch (Exception e1) {
+					JOptionPane.showMessageDialog(null, e1.getMessage(),"错误",JOptionPane.ERROR_MESSAGE);
+				}
+				
+			}
+			this.reloadGood_orderTable();
+		}
+  }
 }

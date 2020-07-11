@@ -16,6 +16,41 @@ public class Order_detailManager {
 	public static void main(String[] args) throws Exception {
 	}
 	
+	public BeanOrder_detail loadonce(int Order_num,int Goods_num) throws Exception {
+		if("".equals(String.valueOf(Order_num))) throw new Exception("订单编号不可为空");
+		if("".equals(String.valueOf(Goods_num))) throw new Exception("订单编号不可为空");
+		Connection conn = null;
+		BeanOrder_detail  bod = new BeanOrder_detail();
+		try {
+			conn = DBUtil.getConnection();
+			String sql = "SELECT *\r\n" + 
+					"FROM order_detail\r\n" + 
+					"WHERE order_num=? and Goods_num=?";
+			java.sql.PreparedStatement pst = conn.prepareStatement(sql);
+			pst.setInt(1, Order_num);
+			pst.setInt(2, Goods_num);
+			java.sql.ResultSet rs = pst.executeQuery();
+			while(rs.next()) {
+				bod.setOrder_num(rs.getInt(1));
+				bod.setDis_num(rs.getInt(2));
+				bod.setGoods_num(rs.getInt(3));
+				bod.setOrder_count(rs.getInt(4));
+				bod.setOrder_price(rs.getFloat(5));
+				bod.setOrder_dis(rs.getFloat(6));
+			}
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}finally{
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO 自动生成的 catch 块
+				e.printStackTrace();
+			}
+		}
+		return bod;
+	}
+	
 	public List<BeanOrder_detail> loadbyOrder_num(int Order_num) throws Exception {
 		List<BeanOrder_detail> result = new ArrayList<BeanOrder_detail>();
 		if("".equals(String.valueOf(Order_num))) throw new Exception("订单编号不可为空");
@@ -294,6 +329,117 @@ public class Order_detailManager {
 					"WHERE order_num=?";
 			java.sql.PreparedStatement pst = conn.prepareStatement(sql);
 			pst.setInt(1, Order_num);
+			pst.execute();
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}finally{
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO 自动生成的 catch 块
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public void Delete(int Order_num,int Goods_num) throws Exception {
+		if("".equals(String.valueOf(Order_num))) throw new Exception("订单编号不可为空");
+		Order_detailManager odm = new Order_detailManager();
+		if(odm.loadbyOrder_num(Order_num).size()==0) throw new Exception("不存在此订单");
+		Connection conn = null;
+		try {
+			conn = DBUtil.getConnection();
+			String sql = "DELETE \r\n" + 
+					"FROM order_detail\r\n" + 
+					"WHERE order_num=? and goods_num=?";
+			java.sql.PreparedStatement pst = conn.prepareStatement(sql);
+			pst.setInt(1, Order_num);
+			pst.setInt(2, Goods_num);
+			pst.execute();
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}finally{
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO 自动生成的 catch 块
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public void ChangeDis(int Order_num,int Goods_num,int Dis_num) throws Exception{
+		if("".equals(String.valueOf(Order_num))) throw new Exception("订单编号不可为空");
+		Order_detailManager odm = new Order_detailManager();
+		if(odm.loadbyOrder_num(Order_num).size()==0) throw new Exception("不存在此订单");
+		if((new Goods_discountManager()).LoadByGoods_Dis_num(Goods_num, Dis_num)==null) throw new Exception("不存在此满折组合");
+		Connection conn = null;
+		try {
+			conn = DBUtil.getConnection();
+			String sql = "UPDATE order_detail \r\n" + 
+					"SET Dis_num=?\r\n" + 
+					"WHERE order_num=? and goods_num=?";
+			java.sql.PreparedStatement pst = conn.prepareStatement(sql);
+			pst.setInt(1, Dis_num);
+			pst.setInt(2, Order_num);
+			pst.setInt(3, Goods_num);
+			pst.execute();
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}finally{
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO 自动生成的 catch 块
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public void ChangeGoods(int Order_num,int Goods_num,int newGoods_num) throws Exception{
+		if("".equals(String.valueOf(Order_num))) throw new Exception("订单编号不可为空");
+		Order_detailManager odm = new Order_detailManager();
+		if(odm.loadbyOrder_num(Order_num).size()==0) throw new Exception("不存在此订单");
+		Connection conn = null;
+		try {
+			conn = DBUtil.getConnection();
+			String sql = "UPDATE order_detail \r\n" + 
+					"SET Goods_num=?\r\n" + 
+					"WHERE order_num=? and goods_num=?";
+			java.sql.PreparedStatement pst = conn.prepareStatement(sql);
+			pst.setInt(1, newGoods_num);
+			pst.setInt(2, Order_num);
+			pst.setInt(3, Goods_num);
+			pst.execute();
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}finally{
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO 自动生成的 catch 块
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public void ChangeCount(int Order_num,int Goods_num,int Count) throws Exception{
+		if("".equals(String.valueOf(Order_num))) throw new Exception("订单编号不可为空");
+		Order_detailManager odm = new Order_detailManager();
+		if(odm.loadbyOrder_num(Order_num).size()==0) throw new Exception("不存在此订单");
+		GoodsManager gm = new GoodsManager();
+		BeanGoods bg = gm.loadbyGoodsnum(Goods_num);
+		if(Count > bg.getGoods_count()) throw new Exception("购买数量大于库存数量,请更改");
+		Connection conn = null;
+		try {
+			conn = DBUtil.getConnection();
+			String sql = "UPDATE order_detail \r\n" + 
+					"SET order_count=?\r\n" + 
+					"WHERE order_num=? and goods_num=?";
+			java.sql.PreparedStatement pst = conn.prepareStatement(sql);
+			pst.setInt(1, Count);
+			pst.setInt(2, Order_num);
+			pst.setInt(3, Goods_num);
 			pst.execute();
 		}catch (SQLException e) {
 			e.printStackTrace();

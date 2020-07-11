@@ -209,43 +209,36 @@ public class Goods_orderManager {
 		}
 	}
 	
-	public void add(int User_num,int Ship_num,int Coupon_num,String Server_Time) throws Exception {
+	public void add(int User_num) throws Exception {
 		if("".equals(String.valueOf(User_num))) throw new Exception("用户编号不可为空");
-		if("".equals(String.valueOf(Ship_num))) throw new Exception("地址编号不可为空");
-		if("".equals(String.valueOf(Server_Time))) throw new Exception("要求送达时间不可为空");
 		
 		java.util.Date today = new Date();
-		SimpleDateFormat sdf2= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		java.util.Date start_date = new Date();
-		start_date = sdf2.parse(Server_Time);
-		if(start_date.getTime() < today.getTime()) throw new Exception("要求送达时间不得在过去");
 		
 		UserManager um = new UserManager();
 		um.loadbyUser_num(User_num);
 		
-		ShippingManager sm = new ShippingManager();
-		sm.loadbyShip_num(Ship_num);
+//		ShippingManager sm = new ShippingManager();
+//		sm.loadbyShip_num(Ship_num);
 		
 		BeanCoupon bc = new BeanCoupon();
-		if(!"0".equals(String.valueOf(Coupon_num))) {
-			CouponManager cm = new CouponManager();
-			bc = cm.loadByCoupon_num(Coupon_num);
-			if(bc.getCoupon_start_date().getTime() > today.getTime()) throw new Exception("优惠券未到可使用时间");
-			if(bc.getCoupon_end_date().getTime() < today.getTime()) throw new Exception("优惠券已过期");
-		}
+//		if(!"0".equals(String.valueOf(Coupon_num))) {
+//			CouponManager cm = new CouponManager();
+//			bc = cm.loadByCoupon_num(Coupon_num);
+//			if(bc.getCoupon_start_date().getTime() > today.getTime()) throw new Exception("优惠券未到可使用时间");
+//			if(bc.getCoupon_end_date().getTime() < today.getTime()) throw new Exception("优惠券已过期");
+//		}
 		
 		Connection conn = null;
 		try {
 			conn = DBUtil.getConnection();
 			String sql= "INSERT \r\n" + 
-					"into goods_order(User_num,Ship_num,Coupon_num,Service_time,Order_state)\r\n" + 
-					"values(?,?,?,?,?)";
+					"into goods_order(User_num,Order_state)\r\n" + 
+					"values(?,?)";
 			java.sql.PreparedStatement pst = conn.prepareStatement(sql);
 			pst.setInt(1, User_num);
-			pst.setInt(2, Ship_num);
-			pst.setInt(3, Coupon_num);
-			pst.setDate(4, new java.sql.Date(start_date.getTime()));
-			pst.setString(5, "购物车中");
+//			pst.setInt(2, Ship_num);
+//			pst.setInt(3, Coupon_num);
+			pst.setString(2, "购物车中");
 			pst.execute();
 			pst.close();
 		}catch (SQLException e) {
@@ -269,7 +262,81 @@ public class Goods_orderManager {
 					"SET Order_state = ?\r\n" + 
 					"WHERE order_num = ?";
 			java.sql.PreparedStatement pst = conn.prepareStatement(sql);
-			pst.setString(1, "配送");
+			pst.setString(1, "下单");
+			pst.setInt(2, order_num);
+			pst.execute();
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}finally{
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO 自动生成的 catch 块
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public void ChangeShip(int order_num,int ship_num) throws Exception {
+		if("".equals(String.valueOf(order_num))) throw new Exception("订单编号不可为空");
+		Connection conn = null;
+		try {
+			conn = DBUtil.getConnection();
+			String sql = "UPDATE goods_order\r\n" + 
+					"SET ship_num = ?\r\n" + 
+					"WHERE order_num = ?";
+			java.sql.PreparedStatement pst = conn.prepareStatement(sql);
+			pst.setInt(1, ship_num);
+			pst.setInt(2, order_num);
+			pst.execute();
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}finally{
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO 自动生成的 catch 块
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public void ChangeCoupon(int order_num,int Coupon_num) throws Exception {
+		if("".equals(String.valueOf(order_num))) throw new Exception("订单编号不可为空");
+		Connection conn = null;
+		try {
+			conn = DBUtil.getConnection();
+			String sql = "UPDATE goods_order\r\n" + 
+					"SET Coupon_num = ?\r\n" + 
+					"WHERE order_num = ?";
+			java.sql.PreparedStatement pst = conn.prepareStatement(sql);
+			pst.setInt(1, Coupon_num);
+			pst.setInt(2, order_num);
+			pst.execute();
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}finally{
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO 自动生成的 catch 块
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public void ChangeTime(int order_num,String end_date) throws Exception {
+		if("".equals(String.valueOf(order_num))) throw new Exception("订单编号不可为空");
+		Connection conn = null;
+		try {
+			SimpleDateFormat sdf2= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			java.util.Date end = sdf2.parse(end_date);
+			conn = DBUtil.getConnection();
+			String sql = "UPDATE goods_order\r\n" + 
+					"SET Service_time = ?\r\n" + 
+					"WHERE order_num = ?";
+			java.sql.PreparedStatement pst = conn.prepareStatement(sql);
+			pst.setDate(1, new java.sql.Date(end.getTime()));
 			pst.setInt(2, order_num);
 			pst.execute();
 		}catch (SQLException e) {
@@ -293,7 +360,7 @@ public class Goods_orderManager {
 					"SET Order_state = ?\r\n" + 
 					"WHERE order_num = ?";
 			java.sql.PreparedStatement pst = conn.prepareStatement(sql);
-			pst.setString(1, "送达");
+			pst.setString(1, "已送达");
 			pst.setInt(2, order_num);
 			pst.execute();
 		}catch (SQLException e) {

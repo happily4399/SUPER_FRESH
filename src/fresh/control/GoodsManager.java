@@ -470,7 +470,7 @@ public class GoodsManager {
 		BeanGoods bg = new BeanGoods();
 		GoodsManager gm = new GoodsManager();
 		bg = gm.loadbyGoodsnum(goods_num);
-		if(Sub_count > bg.getGoods_count()) throw new Exception("减去的数量大于商品数量");
+		if(Sub_count > bg.getGoods_count()) throw new Exception("库存数量不足，"+bg.getGoods_name()+"的库存数量为"+bg.getGoods_count());
 		Connection conn = null;
 		try {
 			conn = DBUtil.getConnection();
