@@ -87,6 +87,7 @@ public class Fresh_categoryManager {
 			sql="UPDATE fresh_category\r\n" + 
 					"SET Category_des=?\r\n" + 
 					"where Category_number=?";
+			pst = conn.prepareStatement(sql);
 			pst.setString(1,category_des);
 			pst.setInt(2, category_num);
 			pst.execute();

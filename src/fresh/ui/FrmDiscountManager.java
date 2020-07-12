@@ -36,7 +36,7 @@ public class FrmDiscountManager extends JDialog implements ActionListener {
 	private Button btnChange = new Button("修改满折信息");
 	private Button btnAdd = new Button("增加满折");
 	private Button btnDelete = new Button("删除满折");
-	private Button btnDeletebytime = new Button("删除过期满折");
+	private Button btnDeletebytime = new Button("删除满折组合");
 	private Button btnSearch = new Button("查询(all)");
 	private Button btnScr_Search = new Button("查询(可用)");
 	private Button btnScreen = new Button("筛选当期满折");
@@ -288,13 +288,30 @@ public class FrmDiscountManager extends JDialog implements ActionListener {
 		}
 		
 		else if(e.getSource()==this.btnDeletebytime) {
-			try {
-				DiscountManager dm = new DiscountManager();
-				dm.Deletebytime();
-			} catch (Exception e1) {
-				JOptionPane.showMessageDialog(null, e1.getMessage(),"错误",JOptionPane.ERROR_MESSAGE);
+			int i = this.Table.getSelectedRow();
+			if(i<0) {
+				JOptionPane.showMessageDialog(null,  "请选择满折","提示",JOptionPane.ERROR_MESSAGE);
+				return;
 			}
-			this.reloadPromotionTable();
+			int j = this.Good_disTable.getSelectedRow();
+			if(j<0) {
+				JOptionPane.showMessageDialog(null,  "请选择满折商品","提示",JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			if(JOptionPane.showConfirmDialog(this,"确定删除此满折组合吗？","确认",JOptionPane.YES_NO_OPTION)==JOptionPane.YES_OPTION) {
+				try {
+					String Dn=this.tblData[i][0].toString();
+					int Dis_num=Integer.parseInt(Dn);
+					String Gn=this.Good_distblData[j][0].toString();
+					GoodsManager gm = new GoodsManager();
+					int Goods_num=gm.loadbyGoodsname(Gn).getGoods_num();
+					Goods_discountManager gdm = new Goods_discountManager();
+					gdm.DeleteByGoods_Dis_num(Goods_num, Dis_num);
+				}catch (Exception e1) {
+					JOptionPane.showMessageDialog(null, e1.getMessage(),"错误",JOptionPane.ERROR_MESSAGE);
+				}
+			}
+			this.reloadGood_Dis(i);
 		}
 	}
 }

@@ -683,7 +683,8 @@ public class FrmMain extends JFrame implements ActionListener{
 		}
 		
 		else if(e.getSource()==this.System_Order) {
-			FrmOrderManager fom = new FrmOrderManager();
+			FrmOrderManager fom = new FrmOrderManager(this,"”√ªß∂©µ•",true);
+			
 		}
 	}
 }	

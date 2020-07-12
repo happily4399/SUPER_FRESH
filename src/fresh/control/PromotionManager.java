@@ -17,7 +17,7 @@ public class PromotionManager {
 		System.out.println(pm.LoadByPro_Num(1).getPro_price());
 	}
 	public void Add(int goods_num,String Pro_name,float Pro_price,int Pro_count,String Pro_start_date,String Pro_end_date) throws Exception{
-		if("".equals(String.valueOf(Pro_name))) throw new Exception("商品编号不可为空");
+		if("".equals(String.valueOf(Pro_name))) throw new Exception("促销名称不可为空");
 		if("".equals(String.valueOf(goods_num))) throw new Exception("商品编号不可为空");
 		if("".equals(String.valueOf(Pro_price))) throw new Exception("促销价格不可为空");
 		if("".equals(String.valueOf(Pro_count))) throw new Exception("促销数量不可为空");
@@ -101,7 +101,7 @@ public class PromotionManager {
 			conn = DBUtil.getConnection();
 			String sql = "DELETE \r\n" + 
 					"FROM promotion\r\n" + 
-					"WHERE Pro_end_date > CURRENT_TIMESTAMP()";
+					"WHERE Pro_end_date < CURRENT_TIMESTAMP()";
 			java.sql.PreparedStatement pst = conn.prepareStatement(sql);
 			pst.execute();
 		}catch (SQLException e) {
@@ -165,12 +165,12 @@ public class PromotionManager {
 			pst.setInt(1, Goods_num);
 			java.sql.ResultSet rs = pst.executeQuery();
 			while(rs.next()) {
-				if(rs.getDate(5).getTime() < today.getTime() && rs.getDate(6).getTime() > today.getTime())
+				if(rs.getDate(6).getTime() < today.getTime() && rs.getDate(7).getTime() > today.getTime())
 				{
 					bp.setPro_num(rs.getInt(1));
-					bp.setGoods_num(rs.getInt(2));
-					bp.setPro_price(rs.getFloat(3));
-					bp.setPro_count(rs.getInt(4));
+					bp.setGoods_num(rs.getInt(3));
+					bp.setPro_price(rs.getFloat(4));
+					bp.setPro_count(rs.getInt(5));
 					bp.setPro_start_date(rs.getTimestamp(6));
 					bp.setPro_end_date(rs.getTimestamp(7));
 				}
@@ -186,6 +186,33 @@ public class PromotionManager {
 			}
 		}
 		return bp;
+	}
+	
+	public boolean IsHave(int Goods_num) throws Exception {
+		if("".equals(String.valueOf(Goods_num))) throw new Exception("商品编号不可为空");
+		BeanPromotion bp = new BeanPromotion();
+		Connection conn = null;
+		java.util.Date today = new Date();
+		try {
+			conn = DBUtil.getConnection();
+			String sql = "SELECT *\r\n" + 
+					"FROM promotion\r\n" + 
+					"WHERE goods_num=? AND Pro_start_date < CURRENT_TIMESTAMP AND Pro_end_date > CURRENT_TIMESTAMP";
+			java.sql.PreparedStatement pst = conn.prepareStatement(sql);
+			pst.setInt(1, Goods_num);
+			java.sql.ResultSet rs = pst.executeQuery();
+			if(rs.next()) return true;
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}finally{
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO 自动生成的 catch 块
+				e.printStackTrace();
+			}
+		}
+		return false;
 	}
 	
 	public List<BeanPromotion> loadAll(){

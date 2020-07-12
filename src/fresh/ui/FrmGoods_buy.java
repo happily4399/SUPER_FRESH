@@ -35,7 +35,7 @@ public class FrmGoods_buy extends JDialog implements ActionListener {
 		toolBar.add(btnCancel);
 		toolBar.setLayout(new FlowLayout(FlowLayout.RIGHT));
 		this.getContentPane().add(toolBar, BorderLayout.SOUTH);
-		
+		edtcount =new JTextField(String.valueOf(0),20);
 		workPane.add(labelcount);
 		workPane.add(edtcount);
 		this.getContentPane().add(workPane, BorderLayout.CENTER);

@@ -45,6 +45,8 @@ public class FrmDis_add extends JDialog implements ActionListener {
 		toolBar.add(this.btnOk);
 		toolBar.add(btnCancel);
 		this.getContentPane().add(toolBar, BorderLayout.SOUTH);
+		edtcount = new JTextField(String.valueOf(0),20);
+		edtdiscount = new JTextField(String.valueOf(0),20);
 		workPane.add(labelname);
 		workPane.add(edtname);
 		workPane.add(labelcount);

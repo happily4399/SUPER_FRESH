@@ -46,6 +46,8 @@ public class FrmCoupon_add extends JDialog implements ActionListener {
 		toolBar.add(this.btnOk);
 		toolBar.add(btnCancel);
 		this.getContentPane().add(toolBar, BorderLayout.SOUTH);
+		edtapp_amount =new JTextField(String.valueOf(0),20);
+		edtded_amount =new JTextField(String.valueOf(0),20);
 		workPane.add(labelCoupon_con);
 		workPane.add(edtCoupon_con);
 		workPane.add(labelapp_amount);

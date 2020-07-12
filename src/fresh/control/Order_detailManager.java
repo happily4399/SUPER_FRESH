@@ -52,6 +52,34 @@ public class Order_detailManager {
 		return bod;
 	}
 	
+	public boolean isHave(int Order_num,int Goods_num) throws Exception {
+		if("".equals(String.valueOf(Order_num))) throw new Exception("订单编号不可为空");
+		if("".equals(String.valueOf(Goods_num))) throw new Exception("订单编号不可为空");
+		Connection conn = null;
+		BeanOrder_detail  bod = new BeanOrder_detail();
+		try {
+			conn = DBUtil.getConnection();
+			String sql = "SELECT *\r\n" + 
+					"FROM order_detail\r\n" + 
+					"WHERE order_num=? and Goods_num=?";
+			java.sql.PreparedStatement pst = conn.prepareStatement(sql);
+			pst.setInt(1, Order_num);
+			pst.setInt(2, Goods_num);
+			java.sql.ResultSet rs = pst.executeQuery();
+			if(rs.next()) return true;
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}finally{
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO 自动生成的 catch 块
+				e.printStackTrace();
+			}
+		}
+		return false;
+	}
+	
 	public List<BeanOrder_detail> loadbyOrder_num(int Order_num) throws Exception {
 		List<BeanOrder_detail> result = new ArrayList<BeanOrder_detail>();
 		if("".equals(String.valueOf(Order_num))) throw new Exception("订单编号不可为空");
@@ -205,7 +233,8 @@ public class Order_detailManager {
 		GoodsManager gm = new GoodsManager();
 		bg = gm.loadbyGoodsnum(bod.getGoods_num());
 		//传输会员价
-		if(BeanUser.currentloginUser.getUser_vip()==1) {
+		System.out.println(ori_price);
+		if(BeanUser.currentloginUser.getUser_vip()==1 && bg.getVip_price()!=0) {
 			if(BeanUser.currentloginUser.getVip_ddl().getTime() >= new Date().getTime()) {
 				ori_price = bg.getVip_price();
 			}else {
@@ -216,12 +245,20 @@ public class Order_detailManager {
 		}
 		
 		PromotionManager pm = new PromotionManager();
-		if(!(pm.LoadByGoods_num(bod.getGoods_num())==null)) {
+		if(pm.IsHave(bod.getGoods_num())) {
 			pro_price = pm.LoadByGoods_num(bod.getGoods_num()).getPro_price();
 			pro_count = pm.LoadByGoods_num(bod.getGoods_num()).getPro_count();
 		}
+		//计算有促销情况的价格
+		if(bod.getOrder_count() > pro_count && pro_count!=0) {
+			sum_price = pro_price * pro_count + ori_price * (bod.getOrder_count() - pro_count);
+		}else if(pro_count >= bod.getOrder_count()&&pro_count!=0){
+			sum_price = pro_price*pro_count;
+		}else {
+			sum_price = ori_price * (bod.getOrder_count() - pro_count);
+		}
 		
-		sum_price = pro_price * pro_count + ori_price * (bod.getOrder_count() - pro_count);
+		
 		if(bod.getDis_num()!=0) {
 			BeanDiscount_infor bdi = new BeanDiscount_infor();
 			DiscountManager dm = new DiscountManager();
@@ -276,6 +313,8 @@ public class Order_detailManager {
 		bg = gm.loadbyGoodsnum(Goods_num);
 		if(order_count > bg.getGoods_count()) throw new Exception("商品库存不足，请重新输入购买数量");
 		BeanOrder_detail bod = new BeanOrder_detail();
+		Order_detailManager odm = new Order_detailManager();
+		if(odm.isHave(Order_num, Goods_num)) throw new Exception("订单中已有相同商品，不可重复添加");
 		if(Dis_num!=0) {
 			BeanDiscount_infor bdi = new BeanDiscount_infor();
 			DiscountManager dm = new DiscountManager();
@@ -316,7 +355,6 @@ public class Order_detailManager {
 				pst.setInt(3, order_count);
 				pst.execute();
 			}
-			Order_detailManager odm = new Order_detailManager();
 			System.out.println(bod.getGoods_num());
 			odm.reloadPrice_count(bod);
 		}catch (SQLException e) {

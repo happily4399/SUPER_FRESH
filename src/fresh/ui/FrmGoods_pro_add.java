@@ -44,6 +44,8 @@ public class FrmGoods_pro_add extends JDialog implements ActionListener {
 		toolBar.add(btnCancel);
 		toolBar.setLayout(new FlowLayout(FlowLayout.RIGHT));
 		this.getContentPane().add(toolBar, BorderLayout.SOUTH);
+		edtPro_price = new JTextField(String.valueOf(0),20);
+		edtPro_count = new JTextField(String.valueOf(0),20);
 		workPane.add(labelPro_name);
 		workPane.add(edtPro_name);
 		workPane.add(labelPro_price);
@@ -80,6 +82,7 @@ public class FrmGoods_pro_add extends JDialog implements ActionListener {
 			PromotionManager pm = new PromotionManager();
 			try {
 				pm.Add(Good_num, Pro_name, Pro_price, Pro_count, Pro_start_date, Pro_end_date);
+				this.setVisible(false);
 			} catch (Exception e1) {
 				JOptionPane.showMessageDialog(null,e1.getMessage(), "´íÎó",JOptionPane.ERROR_MESSAGE);
 				return;

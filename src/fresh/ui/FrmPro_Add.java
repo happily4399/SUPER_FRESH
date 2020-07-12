@@ -45,6 +45,8 @@ public class FrmPro_Add extends JDialog implements ActionListener {
 		toolBar.add(btnCancel);
 		toolBar.setLayout(new FlowLayout(FlowLayout.RIGHT));
 		this.getContentPane().add(toolBar, BorderLayout.SOUTH);
+		edtPro_price=new JTextField(String.valueOf(0),20);
+		edtPro_count=new JTextField(String.valueOf(0),20);
 		workPane.add(labelPro_name);
 		workPane.add(edtPro_name);
 		workPane.add(labelGood_num);

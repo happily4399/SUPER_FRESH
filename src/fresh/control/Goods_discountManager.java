@@ -114,6 +114,34 @@ public class Goods_discountManager {
 		return bgd;
 	}
 	
+	public boolean Ishave(int Goods_num,int Dis_num) throws Exception {
+		if("".equals(String.valueOf(Goods_num))) throw new Exception("商品编号不能为空");
+		if("".equals(String.valueOf(Dis_num))) throw new Exception("满折编号不能为空");
+		Connection conn = null;
+		BeanGoods_discount bgd = new BeanGoods_discount();
+		try {
+			conn = DBUtil.getConnection();
+			String sql = "SELECT *\r\n" + 
+					"FROM goods_discount\r\n" + 
+					"WHERE Goods_num= ? and Dis_num = ?";
+			java.sql.PreparedStatement pst = conn.prepareStatement(sql);
+			pst.setInt(1, Goods_num);
+			pst.setInt(2, Dis_num);
+			java.sql.ResultSet rs = pst.executeQuery();
+			if(rs.next()) return true;
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}finally{
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO 自动生成的 catch 块
+				e.printStackTrace();
+			}
+		}
+		return false;
+	}
+	
 	public List<BeanGoods_discount> LoadAll() throws Exception {
 		List<BeanGoods_discount> result = new ArrayList<BeanGoods_discount>();
 		Connection conn = null;
@@ -150,21 +178,24 @@ public class Goods_discountManager {
 		if("".equals(String.valueOf(Dis_start_date))) throw new Exception("活动开始日期不能为空");
 		if("".equals(String.valueOf(Dis_end_date))) throw new Exception("活动结束不能为空");
 		SimpleDateFormat sdf2= new SimpleDateFormat("yyyy-MM-dd");
+		Goods_discountManager gdm = new Goods_discountManager();
 		java.util.Date start_date = new Date();
 		java.util.Date end_date = new Date();
 		
 		start_date = sdf2.parse(Dis_start_date);
 		end_date = sdf2.parse(Dis_end_date);
-		
+		if(gdm.Ishave(Goods_num, Dis_num)) throw new Exception("此满折组合已存在");
 		Connection conn = null;
 		try {
 			BeanDiscount_infor bdi = new BeanDiscount_infor();
 			GoodsManager gm = new GoodsManager();
 			DiscountManager dm = new DiscountManager();
+			
 			conn = DBUtil.getConnection();
 			gm.loadbyGoodsnum(Goods_num);
 			bdi=dm.loadbyNum(Dis_num);
 			if(bdi.getDis_start_date().getTime() > start_date.getTime()) throw new Exception("满折活动尚未开始，无法添加");
+			if(start_date.getTime() > end_date.getTime()) throw new Exception("开始时间不得晚于结束时间");
 			if(bdi.getDis_end_date().getTime() < end_date.getTime()) throw new Exception("满折商品结束时间不能晚于满折活动");
 			conn = DBUtil.getConnection();
 			String sql = "INSERT\r\n" + 

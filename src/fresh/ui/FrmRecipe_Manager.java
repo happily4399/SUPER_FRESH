@@ -42,6 +42,7 @@ public class FrmRecipe_Manager extends JDialog implements ActionListener{
 	private Button btnSearch = new Button("查询");
 	private Button btnGoodAdd = new Button("增加推荐信息");
 	private Button btnGoodChange = new Button("修改推荐信息");
+	private Button btnGoodDelete = new Button("删除推荐信息");
 	
 	private JTextField edtKeyword = new JTextField(10);
 	private JLabel Labelname = new JLabel("根据字符查询：");
@@ -139,6 +140,7 @@ public class FrmRecipe_Manager extends JDialog implements ActionListener{
 			toolBar.add(kongbai);
 			toolBar.add(this.btnGoodAdd);
 			toolBar.add(this.btnGoodChange);
+			toolBar.add(this.btnGoodDelete);
 		}
 		this.getContentPane().add(toolBar, BorderLayout.NORTH);
 		//提取现有数据
@@ -160,6 +162,7 @@ public class FrmRecipe_Manager extends JDialog implements ActionListener{
 		this.btnDelete.addActionListener(this);
 		this.btnChange.addActionListener(this);
 		this.btnSearch.addActionListener(this);
+		this.btnGoodDelete.addActionListener(this);
 		this.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
 				//System.exit(0);
@@ -255,5 +258,31 @@ public class FrmRecipe_Manager extends JDialog implements ActionListener{
 			}
 			this.reloadRecipeTable();
 		}
-	}
+		
+		else if(e.getSource()==this.btnGoodDelete) {
+			int i = this.GoodTable.getSelectedRow();
+			if(i<0) {
+				JOptionPane.showMessageDialog(null,  "请选择推荐信息","提示",JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			if(JOptionPane.showConfirmDialog(this,"确定更改此推荐信息吗？","确认",JOptionPane.YES_NO_OPTION)==JOptionPane.YES_OPTION){
+				String rn=this.tblGoodData[i][0].toString();
+				String gn=this.tblGoodData[i][1].toString();
+				try {
+					RecipeManager rm = new RecipeManager();
+					int Recipe_num =rm.Loadbyoncename(rn).getRecipe_num();
+					GoodsManager gm = new GoodsManager();
+					int Goods_num = gm.loadbyGoodsname(gn).getGoods_num();
+					Goods_recipeManager grm = new Goods_recipeManager();
+					grm.DeleteByGoods_Recipe_num(Goods_num, Recipe_num);
+					this.reloadGoodTable();
+					this.reloadRecipeTable();
+				} catch (Exception e1) {
+					JOptionPane.showMessageDialog(null, e1.getMessage(),"错误",JOptionPane.ERROR_MESSAGE);
+				}
+				
+			}
+			this.reloadRecipeTable();
+		}
+		}
 }

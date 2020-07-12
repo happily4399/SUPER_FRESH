@@ -46,11 +46,13 @@ public class FrmMy_Order extends JDialog implements ActionListener {
 	private Button btnDelete = new Button("删除订单");
 	private Button btnDeletebyGood = new Button("删除商品");
 	private Button btneva = new Button("评价商品");
+	private Button btntuihuo = new Button("退货");
 	
 	private Object Good_ordertblTitle[]={"订单编号","地址编号","优惠券编号","原始金额","结算金额","要求送达时间","订单状态"};
 	private Object order_tblTitle[]= {"满折编号","商品名称","数量","折扣","最终价格"};
 	private Object Good_ordertblData[][];
 	private Object order_tblData[][];
+	private int User_num=0;
 	
 	DefaultTableModel order_tablmod=new DefaultTableModel();
 	DefaultTableModel Good_ordertablmod=new DefaultTableModel();
@@ -79,6 +81,30 @@ public class FrmMy_Order extends JDialog implements ActionListener {
 			JOptionPane.showMessageDialog(null, e.getMessage(),"错误",JOptionPane.ERROR_MESSAGE);
 		}
 	}
+	
+	private void reloadTable(int User_num){
+		try {
+			Goods_orderManager gom = new Goods_orderManager();
+			List<BeanGoods_order> good_orders = gom.LoadbyUser_num(User_num);
+			Good_ordertblData =new Object[good_orders.size()][7];
+			for(int i=0;i<good_orders.size();i++){
+				Good_ordertblData[i][0]=good_orders.get(i).getOrder_num();
+				Good_ordertblData[i][1]=good_orders.get(i).getShip_num();
+				Good_ordertblData[i][2]=good_orders.get(i).getCoupon_num();
+				Good_ordertblData[i][3]=good_orders.get(i).getOri_price();
+				Good_ordertblData[i][4]=good_orders.get(i).getFin_price();
+				Good_ordertblData[i][5]=good_orders.get(i).getService_time();
+				Good_ordertblData[i][6]=good_orders.get(i).getOrder_state();
+			}
+			Good_ordertablmod.setDataVector(Good_ordertblData,Good_ordertblTitle);
+			this.Good_orderTable.validate();
+			this.Good_orderTable.repaint();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			JOptionPane.showMessageDialog(null, e.getMessage(),"错误",JOptionPane.ERROR_MESSAGE);
+		}
+	}
+	
 	
 	private void reloadOrderTable(int ig){
 		try {
@@ -150,6 +176,44 @@ public class FrmMy_Order extends JDialog implements ActionListener {
 		});
 		this.setVisible(true);
 	}
+	
+	FrmMy_Order(JDialog f,String s,boolean b,int User_num){
+		super(f,s,b);
+		this.User_num=User_num;
+		toolBar.add(this.btntuihuo);
+		this.btntuihuo.addActionListener(this);
+		toolBar.setLayout(new FlowLayout(FlowLayout.LEFT));
+		this.getContentPane().add(toolBar, BorderLayout.NORTH);
+        this.getContentPane().add(new JScrollPane(this.Good_orderTable), BorderLayout.CENTER);
+		this.reloadTable(User_num);
+		this.Good_orderTable.addMouseListener(new MouseAdapter (){
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				int i=FrmMy_Order.this.Good_orderTable.getSelectedRow();
+				if(i<0) {
+					return;
+				}
+				FrmMy_Order.this.reloadOrderTable(i);
+			}
+	    	
+	    });
+		this.getContentPane().add(new JScrollPane(this.order_Table), BorderLayout.EAST);
+		this.setSize(1400, 600);
+		double width = Toolkit.getDefaultToolkit().getScreenSize().getWidth();
+		double height = Toolkit.getDefaultToolkit().getScreenSize().getHeight();
+		this.setLocation((int) (width - this.getWidth()) / 2,
+				(int) (height - this.getHeight()) / 2);
+
+		this.validate();
+		this.addWindowListener(new WindowAdapter() {
+			public void windowClosing(WindowEvent e) {
+				//System.exit(0);
+			}
+		});
+		this.setVisible(true);
+	}
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO 自动生成的方法存根
@@ -183,7 +247,7 @@ public class FrmMy_Order extends JDialog implements ActionListener {
 								gm.SubGoods_count(bod.get(j).getGoods_num(), bod.get(j).getOrder_count());
 							}
 							gom.reload_price(order_num, gom.LoadbyOrder_num(order_num).getCoupon_num());
-							gom.ChangePeisong(order_num);
+							gom.ChangeXiadan(order_num);
 							this.reloadGood_orderTable();
 						}
 						
@@ -193,10 +257,8 @@ public class FrmMy_Order extends JDialog implements ActionListener {
 							this.reloadGood_orderTable();
 						}
 						
-						else if(this.cmbbuytype.getSelectedItem().toString()=="退货") {
-							for(int j=0;i<bod.size();j++) {
-								gm.AddGoods_count(bod.get(j).getGoods_num(), bod.get(j).getOrder_count());
-							}
+						else if(this.cmbbuytype.getSelectedItem().toString()=="退货中") {
+							if(!"已送达".equals(this.Good_ordertblData[i][6].toString())) throw new Exception("未送达，不可退货");
 							gom.Tuihuoing(order_num);
 							this.reloadGood_orderTable();
 						}
@@ -247,6 +309,7 @@ public class FrmMy_Order extends JDialog implements ActionListener {
 					if(odm.loadbyOrder_num(order_num).size()!=0) {
 						odm.Delete(order_num);
 					}
+					System.out.println(order_num);
 					gom.Delete(order_num);
 					this.reloadGood_orderTable();
 				} catch (Exception e1) {
@@ -350,6 +413,30 @@ public class FrmMy_Order extends JDialog implements ActionListener {
 				
 			}
 			this.reloadGood_orderTable();
+		}
+		
+		else if(e.getSource()==this.btntuihuo) {
+			int i = this.Good_orderTable.getSelectedRow();
+			if(i<0) {
+				JOptionPane.showMessageDialog(null,  "请选择订单表","提示",JOptionPane.ERROR_MESSAGE);
+			}
+			try {
+				String on = this.Good_ordertblData[i][0].toString();
+				int order_num = Integer.parseInt(on);
+				GoodsManager gm = new GoodsManager();
+				List<BeanGoods> bg = null;
+				Order_detailManager odm = new Order_detailManager();
+				Goods_orderManager gom = new Goods_orderManager();
+				
+				if(!"退货中".equals(this.Good_ordertblData[i][6].toString())) {
+						JOptionPane.showMessageDialog(null, "商品并非退货中无法更改","错误",JOptionPane.ERROR_MESSAGE);
+				}else {
+					gom.ChangeTuihuo(order_num);
+				}
+			}catch (Exception e1) {
+				JOptionPane.showMessageDialog(null, e1.getMessage(),"错误",JOptionPane.ERROR_MESSAGE);
+			}
+			this.reloadTable(User_num);
 		}
   }
 }

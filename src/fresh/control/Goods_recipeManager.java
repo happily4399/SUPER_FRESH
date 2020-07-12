@@ -138,6 +138,34 @@ public class Goods_recipeManager {
 		return bgr;
 	}
 	
+	public boolean IsHave(int Goods_num,int Recipe_num) throws Exception {
+		if("".equals(String.valueOf(Goods_num))) throw new Exception("商品编号不可为空");
+		if("".equals(String.valueOf(Recipe_num))) throw new Exception("菜谱编号不可为空");
+		BeanGoods_recipe bgr = new BeanGoods_recipe();
+		Connection conn = null;
+		try {
+			conn = DBUtil.getConnection();
+			String sql = "SELECT *\r\n" + 
+					"FROM goods_recipe\r\n" + 
+					"WHERE goods_num=? AND Recipe_num=?";
+			java.sql.PreparedStatement pst = conn.prepareStatement(sql);
+			pst.setInt(1, Goods_num);
+			pst.setInt(2, Recipe_num);
+			java.sql.ResultSet rs = pst.executeQuery();
+			if(rs.next()) return true;
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}finally{
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO 自动生成的 catch 块
+				e.printStackTrace();
+			}
+		}
+		return false;
+	}
+	
 	public int Flag(int Goods_num,int Recipe_num) throws Exception {
 		if("".equals(String.valueOf(Goods_num))) throw new Exception("商品编号不可为空");
 		if("".equals(String.valueOf(Recipe_num))) throw new Exception("菜谱编号不可为空");
@@ -177,6 +205,7 @@ public class Goods_recipeManager {
 		Goods_recipeManager grm = new Goods_recipeManager();
 		if("".equals(String.valueOf(Goods_num))) throw new Exception("商品编号不可为空");
 		if("".equals(String.valueOf(Recipe_num))) throw new Exception("菜谱编号不可为空");
+		if(grm.IsHave(Goods_num, Recipe_num)) throw new Exception("此推荐组合已存在");
 		Connection conn = null;
 		try {
 			if(gm.loadbyGoodsnum(Goods_num)==null) throw new Exception("此商品不存在，无法添加");

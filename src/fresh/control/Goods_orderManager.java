@@ -8,8 +8,10 @@ import java.util.Date;
 import java.util.List;
 
 import fresh.model.BeanCoupon;
+import fresh.model.BeanGoods;
 import fresh.model.BeanGoods_order;
 import fresh.model.BeanOrder_detail;
+import fresh.model.BeanPromotion;
 import fresh.util.DBUtil;
 
 public class Goods_orderManager {
@@ -254,7 +256,7 @@ public class Goods_orderManager {
 		}
 	}
 	
-	public void ChangePeisong(int order_num) throws Exception {
+	public void ChangeSongda(int order_num) throws Exception {
 		if("".equals(String.valueOf(order_num))) throw new Exception("订单编号不可为空");
 		Connection conn = null;
 		try {
@@ -263,7 +265,7 @@ public class Goods_orderManager {
 					"SET Order_state = ?\r\n" + 
 					"WHERE order_num = ?";
 			java.sql.PreparedStatement pst = conn.prepareStatement(sql);
-			pst.setString(1, "下单");
+			pst.setString(1, "已送达");
 			pst.setInt(2, order_num);
 			pst.execute();
 		}catch (SQLException e) {
@@ -352,7 +354,7 @@ public class Goods_orderManager {
 		}
 	}
 	
-	public void ChangeSongda(int order_num) throws Exception {
+	public void ChangeXiadan(int order_num) throws Exception {
 		if("".equals(String.valueOf(order_num))) throw new Exception("订单编号不可为空");
 		Connection conn = null;
 		try {
@@ -361,9 +363,15 @@ public class Goods_orderManager {
 					"SET Order_state = ?\r\n" + 
 					"WHERE order_num = ?";
 			java.sql.PreparedStatement pst = conn.prepareStatement(sql);
-			pst.setString(1, "已送达");
+			pst.setString(1, "下单");
 			pst.setInt(2, order_num);
 			pst.execute();
+			Order_detailManager odm = new Order_detailManager();
+			List<BeanOrder_detail> bd = odm.loadbyOrder_num(order_num);
+			GoodsManager gm = new GoodsManager();
+			for(int i=0;i<bd.size();i++) {
+				gm.SubGoods_count(bd.get(i).getGoods_num(), bd.get(i).getOrder_count());
+			}
 		}catch (SQLException e) {
 			e.printStackTrace();
 		}finally{
@@ -402,11 +410,6 @@ public class Goods_orderManager {
 	
 	public void ChangeTuihuo(int order_num) throws Exception {
 		if("".equals(String.valueOf(order_num))) throw new Exception("订单编号不可为空");
-		Order_detailManager odm = new Order_detailManager();
-		BeanOrder_detail bd = new BeanOrder_detail();
-		
-		GoodsManager gm = new GoodsManager();
-		gm.AddGoods_count(bd.getGoods_num(), bd.getOrder_count());
 		
 		Connection conn = null;
 		try {
@@ -419,6 +422,12 @@ public class Goods_orderManager {
 			pst.setInt(2, order_num);
 			pst.execute();
 			pst.close();
+			Order_detailManager odm = new Order_detailManager();
+			List<BeanOrder_detail> bd = odm.loadbyOrder_num(order_num);
+			GoodsManager gm = new GoodsManager();
+			for(int i=0;i<bd.size();i++) {
+				gm.AddGoods_count(bd.get(i).getGoods_num(), bd.get(i).getOrder_count());
+			}
 		}catch (SQLException e) {
 			e.printStackTrace();
 		}finally{
@@ -434,7 +443,9 @@ public class Goods_orderManager {
 	public void Delete(int order_num) throws Exception {
 		if("".equals(String.valueOf(order_num))) throw new Exception("订单编号不可为空");
 		Order_detailManager odm = new Order_detailManager();
+		Goods_evaluationManager gm = new Goods_evaluationManager();
 		if(!(odm.loadbyOrder_num(order_num).size()==0)) throw new Exception("订单详情表中仍有此订单，拒绝删除");
+		if(!(gm.loadbyOrder_num(order_num).size()==0)) throw new Exception("订单评价表中仍有此订单，拒绝删除");
 		Connection conn = null;
 		try {
 			conn = DBUtil.getConnection();
@@ -494,15 +505,20 @@ public class Goods_orderManager {
 			Goods_orderManager gom = new Goods_orderManager();
 			List<BeanGoods_order> bgo = gom.LoadbyUser_num(User_num);
 			for(int i=0;i<bgo.size();i++) {
+				float Ori_price=0;
 				if("已送达".equals(bgo.get(i).getOrder_state())) {
-                	money = money+bgo.get(i).getOri_price()-bgo.get(i).getFin_price();
     				Order_detailManager odm = new Order_detailManager();
     				List<BeanOrder_detail> bod = odm.loadbyOrder_num(bgo.get(i).getOrder_num());
     				for(int j=0;j<bod.size();j++) {
     					if(bod.get(j).getDis_num()!=0) {
-    						money = money+(bod.get(j).getOrder_price()/bod.get(j).getOrder_dis())-bod.get(j).getOrder_price();
+    						UserManager um = new UserManager();
+    						GoodsManager gm = new GoodsManager();
+    						Goods_discountManager gdm = new Goods_discountManager();
+    						BeanGoods bg = gm.loadbyGoodsnum(bod.get(j).getGoods_num());
+    						Ori_price = Ori_price+bg.getGoods_price()*bod.get(j).getOrder_count();
     					}
     				}
+    				money = money+Ori_price-bgo.get(i).getFin_price();
 				}
 			}
 		}catch (SQLException e) {
