@@ -39,12 +39,13 @@ public class FrmMy_Order extends JDialog implements ActionListener {
 	private JPanel toolBar = new JPanel();
 	
 	private JComboBox cmbbuytype=null;
-	String[] listData ={"购物车中","下单","已送达","退货"};
-	private Button btnChange = new Button("修改订单状态");
+	String[] listData ={"购物车中","下单","已送达","退货中"};
+	private Button btnChange = new Button("更改订单状态");
 	private Button btnCh = new Button("修改订单信息");
 	private Button btnGoodCh = new Button("修改商品信息");
 	private Button btnDelete = new Button("删除订单");
 	private Button btnDeletebyGood = new Button("删除商品");
+	private Button btneva = new Button("评价商品");
 	
 	private Object Good_ordertblTitle[]={"订单编号","地址编号","优惠券编号","原始金额","结算金额","要求送达时间","订单状态"};
 	private Object order_tblTitle[]= {"满折编号","商品名称","数量","折扣","最终价格"};
@@ -91,8 +92,8 @@ public class FrmMy_Order extends JDialog implements ActionListener {
 				order_tblData[i][0]=Orders.get(i).getDis_num();
 				order_tblData[i][1]=gm.loadbyGoodsnum(Orders.get(i).getGoods_num()).getGoods_name();
 			    order_tblData[i][2]=Orders.get(i).getOrder_count();
-			    order_tblData[i][3]=Orders.get(i).getOrder_price();
-				order_tblData[i][4]=Orders.get(i).getOrder_dis();
+			    order_tblData[i][3]=Orders.get(i).getOrder_dis();
+				order_tblData[i][4]=Orders.get(i).getOrder_price();
 			}
 			this.order_tablmod.setDataVector(this.order_tblData,this.order_tblTitle);
 			this.order_Table.validate();
@@ -111,6 +112,7 @@ public class FrmMy_Order extends JDialog implements ActionListener {
 		toolBar.add(btnCh);
 		toolBar.add(btnDelete);
 		toolBar.add(btnDeletebyGood);
+		toolBar.add(btneva);
 		
 		toolBar.setLayout(new FlowLayout(FlowLayout.LEFT));
 		this.getContentPane().add(toolBar, BorderLayout.NORTH);
@@ -140,6 +142,7 @@ public class FrmMy_Order extends JDialog implements ActionListener {
 		this.btnCh.addActionListener(this);
 		this.btnDelete.addActionListener(this);
 		this.btnDeletebyGood.addActionListener(this);
+		this.btneva.addActionListener(this);
 		this.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
 				//System.exit(0);
@@ -167,6 +170,7 @@ public class FrmMy_Order extends JDialog implements ActionListener {
 				List<BeanGoods> bg = null;
 				Order_detailManager odm = new Order_detailManager();
 				Goods_orderManager gom = new Goods_orderManager();
+				
 				if("退货".equals(this.Good_ordertblData[i][6].toString())) {
 						JOptionPane.showMessageDialog(null, "商品已退货，无法更改","错误",JOptionPane.ERROR_MESSAGE);
 				}else {
@@ -184,6 +188,7 @@ public class FrmMy_Order extends JDialog implements ActionListener {
 						}
 						
 						else if(this.cmbbuytype.getSelectedItem().toString()=="已送达") {
+							if(!"下单".equals(this.Good_ordertblData[i][6].toString())) throw new Exception("未下单，不可已送达");
 							gom.ChangeSongda(order_num);
 							this.reloadGood_orderTable();
 						}
@@ -192,8 +197,11 @@ public class FrmMy_Order extends JDialog implements ActionListener {
 							for(int j=0;i<bod.size();j++) {
 								gm.AddGoods_count(bod.get(j).getGoods_num(), bod.get(j).getOrder_count());
 							}
-							gom.ChangeTuihuo(order_num);
+							gom.Tuihuoing(order_num);
 							this.reloadGood_orderTable();
+						}
+						else if(this.cmbbuytype.getSelectedItem().toString()=="购物车中") {
+							throw new Exception("无法更改回购物车");
 						}
 					}catch(Exception e1) {
 						JOptionPane.showMessageDialog(null, e1.getMessage(),"错误",JOptionPane.ERROR_MESSAGE);
@@ -214,6 +222,8 @@ public class FrmMy_Order extends JDialog implements ActionListener {
 				try {
 					if(!"购物车中".equals(this.Good_ordertblData[i][6].toString())) throw new Exception("无法修改此订单信息");
 					new FrmMy_order_change(this,"修改订单信息",true,order_num);
+					Goods_orderManager gom = new Goods_orderManager();
+					gom.reload_price(order_num, gom.LoadbyOrder_num(order_num).getCoupon_num());
 					this.reloadGood_orderTable();
 				} catch (Exception e1) {
 					JOptionPane.showMessageDialog(null, e1.getMessage(),"错误",JOptionPane.ERROR_MESSAGE);
@@ -244,6 +254,7 @@ public class FrmMy_Order extends JDialog implements ActionListener {
 				}
 				
 			}
+			this.reloadGood_orderTable();
 		}
 		
 		else if(e.getSource()==this.btnDeletebyGood) {
@@ -282,6 +293,10 @@ public class FrmMy_Order extends JDialog implements ActionListener {
 			Goods_orderManager gom = new Goods_orderManager();
 			Order_detailManager odm = new Order_detailManager();
 			if(i<0) {
+				JOptionPane.showMessageDialog(null,  "请选择订单","提示",JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			if(j<0) {
 				JOptionPane.showMessageDialog(null,  "请选择商品","提示",JOptionPane.ERROR_MESSAGE);
 				return;
 			}
@@ -294,6 +309,38 @@ public class FrmMy_Order extends JDialog implements ActionListener {
 					if(!"购物车中".equals(this.Good_ordertblData[i][6].toString())) throw new Exception("无法修改此商品信息");
 					new FrmMy_Change(this,"修改商品信息",true,order_num,Good_num);
 					gom.reload_price(order_num, gom.LoadbyOrder_num(order_num).getCoupon_num());
+					this.reloadGood_orderTable();
+					this.reloadOrderTable(i);
+					
+				} catch (Exception e1) {
+					JOptionPane.showMessageDialog(null, e1.getMessage(),"错误",JOptionPane.ERROR_MESSAGE);
+				}
+				
+			}
+			this.reloadGood_orderTable();
+		}
+		
+		else if(e.getSource()==this.btneva) {
+			int i = this.Good_orderTable.getSelectedRow();
+			int j = this.order_Table.getSelectedRow();
+			Goods_orderManager gom = new Goods_orderManager();
+			Order_detailManager odm = new Order_detailManager();
+			if(i<0) {
+				JOptionPane.showMessageDialog(null,  "请选择订单","提示",JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			if(j<0) {
+				JOptionPane.showMessageDialog(null,  "请选择商品","提示",JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			if(JOptionPane.showConfirmDialog(this,"确定评价该商品吗？","确认",JOptionPane.YES_NO_OPTION)==JOptionPane.YES_OPTION){
+				try {
+					GoodsManager gm = new GoodsManager();
+					int order_num=Integer.parseInt(this.Good_ordertblData[i][0].toString());
+					String Good_name = this.order_tblData[j][1].toString();
+					int Good_num = gm.loadbyGoodsname(Good_name).getGoods_num();
+					if(!"已送达".equals(this.Good_ordertblData[i][6].toString())) throw new Exception("未送达，无法评价");
+					new FrmMy_eva(this,"评价商品",true,order_num,Good_num);
 					this.reloadGood_orderTable();
 					this.reloadOrderTable(i);
 					

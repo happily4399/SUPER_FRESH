@@ -196,7 +196,7 @@ public class FrmCoupon_Manager extends JDialog implements ActionListener{
 			}
 			if(JOptionPane.showConfirmDialog(this,"确定删除优惠券吗？","确认",JOptionPane.YES_NO_OPTION)==JOptionPane.YES_OPTION){
 				try {
-					int Coupon_num=this.tblData[i][0].hashCode();
+					int Coupon_num=Integer.parseInt(this.tblData[i][0].toString());
 					cm.Delete(Coupon_num);
 					this.reloadCouponTable();
 				} catch (Exception e1) {

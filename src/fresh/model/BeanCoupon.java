@@ -5,8 +5,8 @@ public class BeanCoupon {
 	private String Coupon_con;
 	private float app_amount;
 	private float Ded_amount;
-	private java.util.Date Coupon_start_date;
-	private java.util.Date Coupon_end_date;
+	private java.sql.Timestamp Coupon_start_date;
+	private java.sql.Timestamp Coupon_end_date;
 	
 	public int getCoupon_num() {
 		return Coupon_num;
@@ -32,16 +32,16 @@ public class BeanCoupon {
 	public void setDed_amount(float f) {
 		Ded_amount = f;
 	}
-	public java.util.Date getCoupon_start_date() {
+	public java.sql.Timestamp getCoupon_start_date() {
 		return Coupon_start_date;
 	}
-	public void setCoupon_start_date(java.util.Date coupon_start_date) {
+	public void setCoupon_start_date(java.sql.Timestamp coupon_start_date) {
 		Coupon_start_date = coupon_start_date;
 	}
-	public java.util.Date getCoupon_end_date() {
+	public java.sql.Timestamp getCoupon_end_date() {
 		return Coupon_end_date;
 	}
-	public void setCoupon_end_date(java.util.Date coupon_end_date) {
+	public void setCoupon_end_date(java.sql.Timestamp coupon_end_date) {
 		Coupon_end_date = coupon_end_date;
 	}
 	

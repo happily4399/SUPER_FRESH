@@ -95,6 +95,7 @@ public class UserManager {
 					bu.setUser_email(rs.getString(6));
 					bu.setUser_city(rs.getString(7));
 					bu.setUser_vip(rs.getInt(9));
+					bu.setVip_ddl(rs.getTimestamp(10));
 				}
 			}
 		}catch (SQLException e) {

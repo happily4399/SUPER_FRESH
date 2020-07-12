@@ -41,8 +41,8 @@ public class DiscountManager {
 			pst.setString(1, Dis_content);
 			pst.setInt(2, Dis_count);
 			pst.setFloat(3, discount);
-			pst.setDate(4, new java.sql.Date(start_date.getTime()));
-			pst.setDate(5, new java.sql.Date(end_date.getTime()));
+			pst.setTimestamp(4, new java.sql.Timestamp(start_date.getTime()));
+			pst.setTimestamp(5, new java.sql.Timestamp(end_date.getTime()));
 			pst.execute();
 		}catch (SQLException e) {
 			e.printStackTrace();
@@ -314,7 +314,7 @@ public class DiscountManager {
 					"SET Dis_start_date=?\r\n" + 
 					"WHERE Dis_num=?";
 			java.sql.PreparedStatement pst = conn.prepareStatement(sql);
-			pst.setDate(1, new java.sql.Date(start_date.getTime()));
+			pst.setTimestamp(1, new java.sql.Timestamp(start_date.getTime()));
 			pst.setInt(2, Dis_num);
 			pst.execute();
 			pst.close();
@@ -344,7 +344,7 @@ public class DiscountManager {
 					"SET Dis_end_date=?\r\n" + 
 					"WHERE Dis_num=?";
 			java.sql.PreparedStatement pst = conn.prepareStatement(sql);
-			pst.setDate(1, new java.sql.Date(end_date.getTime()));
+			pst.setTimestamp(1, new java.sql.Timestamp(end_date.getTime()));
 			pst.setInt(2, Dis_num);
 			pst.execute();
 			pst.close();

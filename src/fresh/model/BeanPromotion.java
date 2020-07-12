@@ -6,8 +6,8 @@ public class BeanPromotion {
 	private String Pro_name;
 	private float Pro_price;
 	private int Pro_count;
-	private java.util.Date Pro_start_date;
-	private java.util.Date Pro_end_date;
+	private java.sql.Timestamp Pro_start_date;
+	private java.sql.Timestamp Pro_end_date;
 	
 	public String getPro_name() {
 		return Pro_name;
@@ -39,16 +39,16 @@ public class BeanPromotion {
 	public void setPro_count(int pro_count) {
 		Pro_count = pro_count;
 	}
-	public java.util.Date getPro_start_date() {
+	public java.sql.Timestamp getPro_start_date() {
 		return Pro_start_date;
 	}
-	public void setPro_start_date(java.util.Date pro_start_date) {
+	public void setPro_start_date(java.sql.Timestamp pro_start_date) {
 		Pro_start_date = pro_start_date;
 	}
-	public java.util.Date getPro_end_date() {
+	public java.sql.Timestamp getPro_end_date() {
 		return Pro_end_date;
 	}
-	public void setPro_end_date(java.util.Date pro_end_date) {
+	public void setPro_end_date(java.sql.Timestamp pro_end_date) {
 		Pro_end_date = pro_end_date;
 	}
 	

@@ -7,7 +7,7 @@ public class BeanGoods_order {
 	private int Coupon_num;
 	private float Ori_price;
 	private float Fin_price;
-	private java.util.Date Service_time;
+	private java.sql.Timestamp Service_time;
 	private String Order_state;
 	
 	public int getOrder_num() {
@@ -46,10 +46,10 @@ public class BeanGoods_order {
 	public void setFin_price(float fin_price) {
 		Fin_price = fin_price;
 	}
-	public java.util.Date getService_time() {
+	public java.sql.Timestamp getService_time() {
 		return Service_time;
 	}
-	public void setService_time(java.util.Date service_time) {
+	public void setService_time(java.sql.Timestamp service_time) {
 		Service_time = service_time;
 	}
 	public String getOrder_state() {

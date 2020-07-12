@@ -9,6 +9,7 @@ import fresh.model.BeanGoods;
 import fresh.util.DBUtil;
 
 public class GoodsManager {
+	
 	public void Add(int category_num,String goods_name,
 			float goods_price,int goods_count,String goods_spe,String goods_det) throws Exception {
 		

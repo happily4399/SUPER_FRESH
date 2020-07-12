@@ -28,6 +28,7 @@ public class FrmMain extends JFrame implements ActionListener{
     
     private JMenuItem  menuItem_UserPasswd=new JMenuItem("修改密码");
     private JMenuItem  menuItem_User_person=new JMenuItem("用户个人信息管理");
+    private JMenuItem  menuItem_User_ship = new JMenuItem("地址编号管理");
     
     private JMenu menu_Admin=new JMenu("admin账号管理");
     
@@ -38,20 +39,22 @@ public class FrmMain extends JFrame implements ActionListener{
     private JMenu menu_Admin_System=new JMenu("系统管理");
     
     private JMenuItem System_User=new JMenuItem("用户管理");
-    private JMenuItem System_Recipe = new JMenuItem("菜谱管理");
+    private JMenuItem System_Recipe = new JMenuItem("菜谱信息");
     private JMenuItem System_Goodbuy = new JMenuItem("采购表管理");
-    
+    private JMenuItem System_Ship = new JMenuItem("地址管理");
+    private JMenuItem System_Order = new JMenuItem("用户消费管理");
     
     private JMenu menu_User_order = new JMenu("订单管理");
     
     private JMenuItem User_order = new JMenuItem("订单详情");
     private JMenuItem Order_add = new JMenuItem("创建新的订单");
-    private JMenuItem Order_goods = new JMenuItem("采购商品");
+    private JMenuItem Order_goods = new JMenuItem("下单商品");
     
-    private JMenu menu_UA = new JMenu("优惠信息");
+    private JMenu menu_UA = new JMenu("优惠信息与商品信息");
     private JMenuItem UA_Coupon = new JMenuItem("优惠券信息");
     private JMenuItem UA_Promotion = new JMenuItem("促销信息");
     private JMenuItem UA_Discount = new JMenuItem("满折信息");
+    private JMenuItem UA_eva = new JMenuItem("商品相关评价");
     
 	private FrmLogin dlglogin = null;
 	private JPanel statusBar = new JPanel();
@@ -64,7 +67,7 @@ public class FrmMain extends JFrame implements ActionListener{
 	
 	private JMenu menu_Goods=new JMenu("商品管理");
 	private JMenuItem JMGoods_buy = new JMenuItem("采购商品");
-	private JMenuItem JMGoods_Add = new JMenuItem("增加商品");
+	private JMenuItem JMGoods_Add = new JMenuItem("上架商品");
 	private JMenuItem JMGoods_Change = new JMenuItem("修改商品信息");
 	private JMenuItem JMGoods_Delete = new JMenuItem("删除商品");
 	private JMenuItem JMGoods_pro = new JMenuItem("增加促销活动");
@@ -219,6 +222,8 @@ public class FrmMain extends JFrame implements ActionListener{
 			menuItem_UserPasswd.addActionListener(this);
 			menu_User.add(menuItem_User_person);
 			menuItem_User_person.addActionListener(this);
+			menu_User.add(menuItem_User_ship);
+			menuItem_User_ship.addActionListener(this);
 			
 			this.menu_User_order.add(this.User_order);
 			User_order.addActionListener(this);
@@ -254,10 +259,12 @@ public class FrmMain extends JFrame implements ActionListener{
 			
 			menu_Admin_System.add(System_User);
 			System_User.addActionListener(this);
-			menu_Admin_System.add(System_Recipe);
-			System_Recipe.addActionListener(this);
 			menu_Admin_System.add(System_Goodbuy);
 			System_Goodbuy.addActionListener(this);
+			menu_Admin_System.add(System_Ship);
+			System_Ship.addActionListener(this);
+			menu_Admin_System.add(System_Order);
+			System_Order.addActionListener(this);
 			
 			menubar.add(menu_Admin_System);
 			menubar.add(menu_Admin);
@@ -277,6 +284,10 @@ public class FrmMain extends JFrame implements ActionListener{
 		this.UA_Promotion.addActionListener(this);
 		this.menu_UA.add(this.UA_Discount);
 		this.UA_Discount.addActionListener(this);
+		this.menu_UA.add(this.System_Recipe);
+		System_Recipe.addActionListener(this);
+		this.menu_UA.add(this.UA_eva);
+		this.UA_eva.addActionListener(this);
 		menubar.add(menu_UA);
 		
 		toolBar.setLayout(new FlowLayout(FlowLayout.LEFT));
@@ -506,8 +517,12 @@ public class FrmMain extends JFrame implements ActionListener{
 		}
 		
 		else if(e.getSource()==this.System_Recipe) { 
-			FrmRecipe_Manager frm = new FrmRecipe_Manager(this,"菜谱管理系统",true);
-			frm.setVisible(false);
+			try {
+				FrmRecipe_Manager frm = new FrmRecipe_Manager(this,"菜谱管理系统",true);
+				frm.setVisible(false);
+			}catch (Exception e1) {
+				JOptionPane.showMessageDialog(null, e1.getMessage(),"错误",JOptionPane.ERROR_MESSAGE);
+			}
 		}
 		
 		else if(e.getSource()==this.JMGoods_buy) {
@@ -603,7 +618,6 @@ public class FrmMain extends JFrame implements ActionListener{
 				}
 				
 			}
-			this.reloadGoodsTable(i);
 		}
 		
 		else if(e.getSource()==this.User_order) {
@@ -621,7 +635,56 @@ public class FrmMain extends JFrame implements ActionListener{
 				JOptionPane.showMessageDialog(null, e1.getMessage(),"错误",JOptionPane.ERROR_MESSAGE);
 			}
 		}
+		
+		else if(e.getSource()==this.Order_goods) {
+			int i = this.GoodsTable.getSelectedRow();
+			if(i<0) {
+				JOptionPane.showMessageDialog(null,  "请选择商品","提示",JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			if(JOptionPane.showConfirmDialog(this,"确定购买吗？","确认",JOptionPane.YES_NO_OPTION)==JOptionPane.YES_OPTION) {
+				String Cn=this.tblGoodsData[i][0].toString();
+				int Goods_num=Integer.parseInt(Cn);
+				System.out.println(Goods_num);
+				try {
+					new FrmOrder_Goods_ADD(this,"购买商品",true,Goods_num);
+				}catch(Exception e1) {
+					JOptionPane.showMessageDialog(null, e1.getMessage(),"错误",JOptionPane.ERROR_MESSAGE);
+				}
+			}
+			this.reloadSearchFreshTable();
+			this.reloadGoodsTablebyname();
+		}
+		
+		else if(e.getSource()==this.menuItem_User_ship) {
+			new FrmUser_shipManager(this,"地址信息表",true); 
+		}
+		
+		else if(e.getSource()==this.System_Ship) {
+			new FrmUser_shipManager(this,"地址信息表",true); 
+		}
+		
+		else if(e.getSource()==this.UA_eva) {
+			int i = this.GoodsTable.getSelectedRow();
+			if(i<0) {
+				JOptionPane.showMessageDialog(null,  "请选择商品","提示",JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			if(JOptionPane.showConfirmDialog(this,"确定查看此商品评价吗？","确认",JOptionPane.YES_NO_OPTION)==JOptionPane.YES_OPTION) {
+				String Cn=this.tblGoodsData[i][0].toString();
+				int Goods_num=Integer.parseInt(Cn);
+				System.out.println(Goods_num);
+				try {
+					new FrmGoods_eva(this,"商品评价区",true,Goods_num);
+				}catch(Exception e1) {
+					JOptionPane.showMessageDialog(null, e1.getMessage(),"错误",JOptionPane.ERROR_MESSAGE);
+				}
+			}
+		}
+		
+		else if(e.getSource()==this.System_Order) {
+			FrmOrderManager fom = new FrmOrderManager();
+		}
 	}
-
 }	
 

@@ -4,12 +4,21 @@ import java.io.File;
 
 public class BeanGoods_evaluation {
 	private int Order_num;
+	private int Good_num;
 	private int User_num;
 	private String eva_con;
-	private java.util.Date eva_date;
+	private java.sql.Timestamp eva_date;
 	private int star;
 	private String photo;
 	
+	
+	public int getGood_num() {
+		return Good_num;
+	}
+	
+	public void setGood_num(int good_num) {
+		Good_num = good_num;
+	}
 	public int getOrder_num() {
 		return Order_num;
 	}
@@ -28,10 +37,10 @@ public class BeanGoods_evaluation {
 	public void setEva_con(String eva_con) {
 		this.eva_con = eva_con;
 	}
-	public java.util.Date getEva_date() {
+	public java.sql.Timestamp getEva_date() {
 		return eva_date;
 	}
-	public void setEva_date(java.util.Date eva_date) {
+	public void setEva_date(java.sql.Timestamp eva_date) {
 		this.eva_date = eva_date;
 	}
 	public int getStar() {

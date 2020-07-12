@@ -5,8 +5,8 @@ public class BeanDiscount_infor {
 	private String Dis_content;
 	private int Dis_count;
 	private float dicount;
-	private java.util.Date Dis_start_date;
-	private java.util.Date Dis_end_date;
+	private java.sql.Timestamp Dis_start_date;
+	private java.sql.Timestamp Dis_end_date;
 	
 	public int getDis_num() {
 		return Dis_num;
@@ -32,16 +32,16 @@ public class BeanDiscount_infor {
 	public void setDicount(float dicount) {
 		this.dicount = dicount;
 	}
-	public java.util.Date getDis_start_date() {
+	public java.sql.Timestamp getDis_start_date() {
 		return Dis_start_date;
 	}
-	public void setDis_start_date(java.util.Date dis_start_date) {
+	public void setDis_start_date(java.sql.Timestamp dis_start_date) {
 		Dis_start_date = dis_start_date;
 	}
-	public java.util.Date getDis_end_date() {
+	public java.sql.Timestamp getDis_end_date() {
 		return Dis_end_date;
 	}
-	public void setDis_end_date(java.util.Date dis_end_date) {
+	public void setDis_end_date(java.sql.Timestamp dis_end_date) {
 		Dis_end_date = dis_end_date;
 	}
 	

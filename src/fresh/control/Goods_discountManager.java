@@ -127,8 +127,8 @@ public class Goods_discountManager {
 				BeanGoods_discount bgd = new BeanGoods_discount();
 				bgd.setGoods_num(rs.getInt(1));
 				bgd.setDis_num(rs.getInt(2));
-				bgd.setStart_Date(rs.getTime(3));
-				bgd.setEnd_Date(rs.getTime(4));
+				bgd.setStart_Date(rs.getTimestamp(3));
+				bgd.setEnd_Date(rs.getTimestamp(4));
 				result.add(bgd);
 			}
 		}catch (SQLException e) {
@@ -173,8 +173,8 @@ public class Goods_discountManager {
 			java.sql.PreparedStatement pst = conn.prepareStatement(sql);
 			pst.setInt(1, Goods_num);
 			pst.setInt(2, Dis_num);
-			pst.setDate(3, new java.sql.Date(start_date.getTime()));
-			pst.setDate(4, new java.sql.Date(end_date.getTime()));
+			pst.setTimestamp(3, new java.sql.Timestamp(start_date.getTime()));
+			pst.setTimestamp(4, new java.sql.Timestamp(end_date.getTime()));
 			pst.execute();
 		}catch (SQLException e) {
 			e.printStackTrace();

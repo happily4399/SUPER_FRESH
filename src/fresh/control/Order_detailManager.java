@@ -10,6 +10,7 @@ import fresh.model.BeanDiscount_infor;
 import fresh.model.BeanGoods;
 import fresh.model.BeanGoods_discount;
 import fresh.model.BeanOrder_detail;
+import fresh.model.BeanUser;
 import fresh.util.DBUtil;
 
 public class Order_detailManager {
@@ -203,12 +204,14 @@ public class Order_detailManager {
 		UserManager um = new UserManager();
 		GoodsManager gm = new GoodsManager();
 		bg = gm.loadbyGoodsnum(bod.getGoods_num());
-		
 		//传输会员价
-		if(!("".equals(String.valueOf(um.loadbyUser_num(gom.LoadbyOrder_num(bod.getOrder_num()).getUser_num()).getVip_ddl()))
-				)&&um.loadbyUser_num(gom.LoadbyOrder_num(bod.getOrder_num()).getUser_num()).getVip_ddl().getTime() >= today.getTime())
-			ori_price = bg.getVip_price();
-		else {
+		if(BeanUser.currentloginUser.getUser_vip()==1) {
+			if(BeanUser.currentloginUser.getVip_ddl().getTime() >= new Date().getTime()) {
+				ori_price = bg.getVip_price();
+			}else {
+				ori_price = bg.getGoods_price();
+			}
+		}else {
 			ori_price = bg.getGoods_price();
 		}
 		
@@ -217,36 +220,38 @@ public class Order_detailManager {
 			pro_price = pm.LoadByGoods_num(bod.getGoods_num()).getPro_price();
 			pro_count = pm.LoadByGoods_num(bod.getGoods_num()).getPro_count();
 		}
+		
 		sum_price = pro_price * pro_count + ori_price * (bod.getOrder_count() - pro_count);
-		
-		BeanDiscount_infor bdi = new BeanDiscount_infor();
-		DiscountManager dm = new DiscountManager();
-		bdi = dm.loadbyNum(bod.getDis_num());
-		
-		BeanGoods_discount bgd = new BeanGoods_discount();
-		Goods_discountManager bdm = new Goods_discountManager();
-		bgd = bdm.LoadByGoods_Dis_num(bod.getGoods_num(), bod.getDis_num());
-		if(bgd.getStart_Date().getTime() > today.getTime()) throw new Exception("此商品满折优惠未到开始时间，无法使用");
-		if(bgd.getEnd_Date().getTime() < today.getTime()) throw new Exception("此商品满折优惠已过期，无法使用");
- 		
-		
-		
-		if(bod.getOrder_count()>=bdi.getDis_count()) {
-			sum_price = sum_price * bdi.getDicount();
-			count = bdi.getDicount();
+		if(bod.getDis_num()!=0) {
+			BeanDiscount_infor bdi = new BeanDiscount_infor();
+			DiscountManager dm = new DiscountManager();
+			bdi = dm.loadbyNum(bod.getDis_num());
+			
+			BeanGoods_discount bgd = new BeanGoods_discount();
+			Goods_discountManager bdm = new Goods_discountManager();
+			bgd = bdm.LoadByGoods_Dis_num(bod.getGoods_num(), bod.getDis_num());
+			if(bgd.getStart_Date().getTime() > today.getTime()) throw new Exception("此商品满折优惠未到开始时间，无法使用");
+			if(bgd.getEnd_Date().getTime() < today.getTime()) throw new Exception("此商品满折优惠已过期，无法使用");
+	 		
+			
+			
+			if(bod.getOrder_count()>=bdi.getDis_count()) {
+				sum_price = sum_price * bdi.getDicount();
+				count = bdi.getDicount();
+			}
 		}
-		
 		Connection conn = null;
 		
 		try {
 			conn = DBUtil.getConnection();
 			String sql = "UPDATE order_detail\r\n" + 
 					"SET order_price=?,order_dis=?\r\n" + 
-					"WHERE order_num=?";
+					"WHERE order_num=? and Goods_num=?";
 			java.sql.PreparedStatement pst = conn.prepareStatement(sql);
 			pst.setFloat(1, sum_price);
 			pst.setFloat(2, count);
 			pst.setInt(3, bod.getOrder_num());
+			pst.setInt(4, bg.getGoods_num());
 			pst.execute();
 		}catch (SQLException e) {
 			e.printStackTrace();
@@ -270,8 +275,8 @@ public class Order_detailManager {
 		GoodsManager gm = new GoodsManager();
 		bg = gm.loadbyGoodsnum(Goods_num);
 		if(order_count > bg.getGoods_count()) throw new Exception("商品库存不足，请重新输入购买数量");
-		
-		if(!"".equals(String.valueOf(Dis_num))) {
+		BeanOrder_detail bod = new BeanOrder_detail();
+		if(Dis_num!=0) {
 			BeanDiscount_infor bdi = new BeanDiscount_infor();
 			DiscountManager dm = new DiscountManager();
 			bdi = dm.loadbyNum(Dis_num);
@@ -280,10 +285,8 @@ public class Order_detailManager {
 			Goods_discountManager bdm = new Goods_discountManager();
 			bgd = bdm.LoadByGoods_Dis_num(Goods_num, Dis_num);
 		}
-
-		BeanOrder_detail bod = new BeanOrder_detail();
-		bod.setOrder_num(Order_num);
 		bod.setDis_num(Dis_num);
+		bod.setOrder_num(Order_num);
 		bod.setGoods_num(Goods_num);
 		bod.setOrder_count(order_count);
 		
@@ -294,17 +297,28 @@ public class Order_detailManager {
 			String sql = "INSERT\r\n" + 
 					"INTO order_detail(order_num,Dis_num,goods_num,order_count)\r\n" + 
 					"VALUES(?,?,?,?)";
-			java.sql.PreparedStatement pst = conn.prepareStatement(sql);
-			pst.setInt(1, Order_num);
-			pst.setInt(2, Dis_num);
-			pst.setInt(3, Goods_num);
-			pst.setInt(4, order_count);
-			pst.execute();
+			String sql2 = "INSERT\r\n" + 
+					"INTO order_detail(order_num,goods_num,order_count)\r\n" + 
+					"VALUES(?,?,?)";
+			java.sql.PreparedStatement pst = null;
+			if(Dis_num!=0) {
+				pst = conn.prepareStatement(sql);
+				pst.setInt(1, Order_num);
+				pst.setInt(2, Dis_num);
+				pst.setInt(3, Goods_num);
+				pst.setInt(4, order_count);
+				pst.execute();
+			}
+			else {
+				pst = conn.prepareStatement(sql2);
+				pst.setInt(1, Order_num);
+				pst.setInt(2, Goods_num);
+				pst.setInt(3, order_count);
+				pst.execute();
+			}
 			Order_detailManager odm = new Order_detailManager();
 			System.out.println(bod.getGoods_num());
 			odm.reloadPrice_count(bod);
-			
-			gm.SubGoods_count(Goods_num, order_count);
 		}catch (SQLException e) {
 			e.printStackTrace();
 		}finally{

@@ -204,8 +204,8 @@ public class CouponManager {
 			pst.setString(1, Coupon_con);
 			pst.setFloat(2, app_amount);
 			pst.setFloat(3, Ded_amount);
-			pst.setDate(4, new java.sql.Date(start_date.getTime()));
-			pst.setDate(5, new java.sql.Date(end_date.getTime()));
+			pst.setTimestamp(4, new java.sql.Timestamp(start_date.getTime()));
+			pst.setTimestamp(5, new java.sql.Timestamp(end_date.getTime()));
 			pst.execute();
 		}catch (SQLException e) {
 			e.printStackTrace();
@@ -361,7 +361,7 @@ public class CouponManager {
 					"SET Coupon_start_date=?\r\n" + 
 					"where Coupon_num=?";
 			java.sql.PreparedStatement pst = conn.prepareStatement(sql);
-			pst.setDate(1, new java.sql.Date(start_date.getTime()));
+			pst.setTimestamp(1, new java.sql.Timestamp(start_date.getTime()));
 			pst.setInt(2, Coupon_num);
 			pst.execute();
 			pst.close();
@@ -391,7 +391,7 @@ public class CouponManager {
 					"SET Coupon_end_date=?\r\n" + 
 					"where Coupon_num=?";
 			java.sql.PreparedStatement pst = conn.prepareStatement(sql);
-			pst.setDate(1, new java.sql.Date(end_date.getTime()));
+			pst.setTimestamp(1, new java.sql.Timestamp(end_date.getTime()));
 			pst.setInt(2, Coupon_num);
 			pst.execute();
 			pst.close();

@@ -44,6 +44,40 @@ public class RecipeManager {
 		return br;
 	}
 	
+	public BeanRecipe Loadbyoncename(String name) throws Exception {
+		BeanRecipe br = new BeanRecipe();
+		Connection conn = null;
+		try {
+			conn = DBUtil.getConnection();
+			String sql = "SELECT *\r\n" + 
+					"FROM recipe\r\n" + 
+					"WHERE Recipe_name=?";
+			java.sql.PreparedStatement pst = conn.prepareStatement(sql);
+			pst.setString(1, name);
+			java.sql.ResultSet rs = pst.executeQuery();
+			if(!rs.next()) throw new Exception("菜谱不存在");
+			else {
+				br.setRecipe_num(rs.getInt(1));
+				br.setRecipe_name(rs.getString(2));
+				br.setRecipe_mater(rs.getString(3));
+				br.setRecipe_step(rs.getString(4));
+				br.setRecipe_picture(rs.getString(5));
+			}
+			pst.close();
+			rs.close();
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}finally{
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO 自动生成的 catch 块
+				e.printStackTrace();
+			}
+		}
+		return br;
+	}
+	
 	public List<BeanRecipe> LoadAll() throws Exception {
 		List<BeanRecipe> result = new ArrayList<BeanRecipe>();
 		Connection conn = null;

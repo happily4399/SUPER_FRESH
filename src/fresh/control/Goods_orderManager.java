@@ -15,7 +15,8 @@ import fresh.util.DBUtil;
 public class Goods_orderManager {
 	
 	public static void main(String[] args) throws Exception {
-		
+		Goods_orderManager gom = new Goods_orderManager();
+		System.out.println(gom.LoadPrebyUser(2));
 	}
 	
 	public List<BeanGoods_order> LoadbyCoupon_num(int Coupon_num) throws Exception {
@@ -39,7 +40,7 @@ public class Goods_orderManager {
 				bgo.setCoupon_num(rs.getInt(4));
 				bgo.setOri_price(rs.getFloat(5));
 				bgo.setFin_price(rs.getFloat(6));
-				bgo.setService_time(rs.getDate(7));
+				bgo.setService_time(rs.getTimestamp(7));
 				bgo.setOrder_state(rs.getString(8));
 				result.add(bgo);
 			}
@@ -76,7 +77,7 @@ public class Goods_orderManager {
 				bgo.setCoupon_num(rs.getInt(4));
 				bgo.setOri_price(rs.getFloat(5));
 				bgo.setFin_price(rs.getFloat(6));
-				bgo.setService_time(rs.getDate(7));
+				bgo.setService_time(rs.getTimestamp(7));
 				bgo.setOrder_state(rs.getString(8));
 			}
 		}catch (SQLException e) {
@@ -112,7 +113,7 @@ public class Goods_orderManager {
 				bgo.setCoupon_num(rs.getInt(4));
 				bgo.setOri_price(rs.getFloat(5));
 				bgo.setFin_price(rs.getFloat(6));
-				bgo.setService_time(rs.getDate(7));
+				bgo.setService_time(rs.getTimestamp(7));
 				bgo.setOrder_state(rs.getString(8));
 				result.add(bgo);
 			}
@@ -149,7 +150,7 @@ public class Goods_orderManager {
 				bgo.setCoupon_num(rs.getInt(4));
 				bgo.setOri_price(rs.getFloat(5));
 				bgo.setFin_price(rs.getFloat(6));
-				bgo.setService_time(rs.getDate(7));
+				bgo.setService_time(rs.getTimestamp(7));
 				bgo.setOrder_state(rs.getString(8));
 				result.add(bgo);
 			}
@@ -336,7 +337,7 @@ public class Goods_orderManager {
 					"SET Service_time = ?\r\n" + 
 					"WHERE order_num = ?";
 			java.sql.PreparedStatement pst = conn.prepareStatement(sql);
-			pst.setDate(1, new java.sql.Date(end.getTime()));
+			pst.setTimestamp(1, new java.sql.Timestamp(end.getTime()));
 			pst.setInt(2, order_num);
 			pst.execute();
 		}catch (SQLException e) {
@@ -361,6 +362,30 @@ public class Goods_orderManager {
 					"WHERE order_num = ?";
 			java.sql.PreparedStatement pst = conn.prepareStatement(sql);
 			pst.setString(1, "已送达");
+			pst.setInt(2, order_num);
+			pst.execute();
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}finally{
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO 自动生成的 catch 块
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public void Tuihuoing(int order_num) throws Exception {
+		if("".equals(String.valueOf(order_num))) throw new Exception("订单编号不可为空");
+		Connection conn = null;
+		try {
+			conn = DBUtil.getConnection();
+			String sql = "UPDATE goods_order\r\n" + 
+					"SET Order_state = ?\r\n" + 
+					"WHERE order_num = ?";
+			java.sql.PreparedStatement pst = conn.prepareStatement(sql);
+			pst.setString(1, "退货中");
 			pst.setInt(2, order_num);
 			pst.execute();
 		}catch (SQLException e) {
@@ -429,5 +454,93 @@ public class Goods_orderManager {
 				e.printStackTrace();
 			}
 		}
+	}
+	
+	public int Loadorder_num(int User_num) throws Exception{
+		if("".equals(String.valueOf(User_num))) throw new Exception("用户编号不可为空");
+		int num=0;
+		Connection conn = null;
+		try {
+			conn = DBUtil.getConnection();
+			String sql = "SELECT COUNT(order_num)\r\n" + 
+					"FROM goods_order\r\n" + 
+					"WHERE User_num=? and Order_state = '已送达'\r\n" + 
+					"GROUP BY User_num";
+			java.sql.PreparedStatement pst = conn.prepareStatement(sql);
+			pst.setInt(1, User_num);
+			java.sql.ResultSet rs = pst.executeQuery();
+			if(rs.next()) {
+				num=rs.getInt(1);
+			}
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}finally{
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO 自动生成的 catch 块
+				e.printStackTrace();
+			}
+		}
+		return num;
+	}
+	
+	public float LoadPrebyUser(int User_num) throws Exception {
+		if("".equals(String.valueOf(User_num))) throw new Exception("用户编号不可为空");
+		float money=0;
+		Connection conn = null;
+		try {
+			conn = DBUtil.getConnection();
+			Goods_orderManager gom = new Goods_orderManager();
+			List<BeanGoods_order> bgo = gom.LoadbyUser_num(User_num);
+			for(int i=0;i<bgo.size();i++) {
+				if("已送达".equals(bgo.get(i).getOrder_state())) {
+                	money = money+bgo.get(i).getOri_price()-bgo.get(i).getFin_price();
+    				Order_detailManager odm = new Order_detailManager();
+    				List<BeanOrder_detail> bod = odm.loadbyOrder_num(bgo.get(i).getOrder_num());
+    				for(int j=0;j<bod.size();j++) {
+    					if(bod.get(j).getDis_num()!=0) {
+    						money = money+(bod.get(j).getOrder_price()/bod.get(j).getOrder_dis())-bod.get(j).getOrder_price();
+    					}
+    				}
+				}
+			}
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}finally{
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO 自动生成的 catch 块
+				e.printStackTrace();
+			}
+		}
+		return money;
+	}
+	
+	public float LoadMoneybyUser(int User_num) throws Exception {
+		if("".equals(String.valueOf(User_num))) throw new Exception("用户编号不可为空");
+		float money=0;
+		Connection conn = null;
+		try {
+			conn = DBUtil.getConnection();
+			Goods_orderManager gom = new Goods_orderManager();
+			List<BeanGoods_order> bgo = gom.LoadbyUser_num(User_num);
+			for(int i=0;i<bgo.size();i++) {
+				if("已送达".equals(bgo.get(i).getOrder_state())) {
+                	money=money+bgo.get(i).getFin_price();
+				}
+			}
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}finally{
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO 自动生成的 catch 块
+				e.printStackTrace();
+			}
+		}
+		return money;
 	}
 }

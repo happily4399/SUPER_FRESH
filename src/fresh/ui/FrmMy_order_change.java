@@ -120,6 +120,7 @@ public class FrmMy_order_change extends JDialog implements ActionListener {
 					return;
 				}
 			}
+			this.setVisible(false);
 		}
 	}
 	

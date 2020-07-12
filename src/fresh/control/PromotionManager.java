@@ -56,8 +56,8 @@ public class PromotionManager {
 			pst.setString(2, Pro_name);
 			pst.setFloat(3, Pro_price);
 			pst.setInt(4, Pro_count);
-			pst.setDate(5, new java.sql.Date(start_date.getTime()));
-			pst.setDate(6, new java.sql.Date(end_date.getTime())); 
+			pst.setTimestamp(5, new java.sql.Timestamp(start_date.getTime()));
+			pst.setTimestamp(6, new java.sql.Timestamp(end_date.getTime())); 
 			pst.execute();
 		}catch (SQLException e) {
 			e.printStackTrace();
@@ -135,8 +135,8 @@ public class PromotionManager {
 				bp.setGoods_num(rs.getInt(3));
 				bp.setPro_price(rs.getFloat(4));
 				bp.setPro_count(rs.getInt(5));
-				bp.setPro_start_date(rs.getDate(6));
-				bp.setPro_end_date(rs.getDate(7));
+				bp.setPro_start_date(rs.getTimestamp(6));
+				bp.setPro_end_date(rs.getTimestamp(7));
 			}
 		}catch (SQLException e) {
 			e.printStackTrace();
@@ -171,8 +171,8 @@ public class PromotionManager {
 					bp.setGoods_num(rs.getInt(2));
 					bp.setPro_price(rs.getFloat(3));
 					bp.setPro_count(rs.getInt(4));
-					bp.setPro_start_date(rs.getDate(5));
-					bp.setPro_end_date(rs.getDate(6));
+					bp.setPro_start_date(rs.getTimestamp(6));
+					bp.setPro_end_date(rs.getTimestamp(7));
 				}
 			}
 		}catch (SQLException e) {
@@ -204,8 +204,8 @@ public class PromotionManager {
 				bp.setGoods_num(rs.getInt(3));
 				bp.setPro_price(rs.getFloat(4));
 				bp.setPro_count(rs.getInt(5));
-				bp.setPro_start_date(rs.getDate(6));
-				bp.setPro_end_date(rs.getDate(7));
+				bp.setPro_start_date(rs.getTimestamp(6));
+				bp.setPro_end_date(rs.getTimestamp(7));
 				result.add(bp);
 			}
 		}catch (SQLException e) {
@@ -238,8 +238,8 @@ public class PromotionManager {
 				bp.setGoods_num(rs.getInt(3));
 				bp.setPro_price(rs.getFloat(4));
 				bp.setPro_count(rs.getInt(5));
-				bp.setPro_start_date(rs.getDate(6));
-				bp.setPro_end_date(rs.getDate(7));
+				bp.setPro_start_date(rs.getTimestamp(6));
+				bp.setPro_end_date(rs.getTimestamp(7));
 				result.add(bp);
 			}
 		}catch (SQLException e) {
@@ -272,8 +272,8 @@ public class PromotionManager {
 				bp.setGoods_num(rs.getInt(3));
 				bp.setPro_price(rs.getFloat(4));
 				bp.setPro_count(rs.getInt(5));
-				bp.setPro_start_date(rs.getDate(6));
-				bp.setPro_end_date(rs.getDate(7));
+				bp.setPro_start_date(rs.getTimestamp(6));
+				bp.setPro_end_date(rs.getTimestamp(7));
 				result.add(bp);
 			}
 		}catch (SQLException e) {
@@ -306,8 +306,8 @@ public class PromotionManager {
 				bp.setGoods_num(rs.getInt(3));
 				bp.setPro_price(rs.getFloat(4));
 				bp.setPro_count(rs.getInt(5));
-				bp.setPro_start_date(rs.getDate(6));
-				bp.setPro_end_date(rs.getDate(7));
+				bp.setPro_start_date(rs.getTimestamp(6));
+				bp.setPro_end_date(rs.getTimestamp(7));
 				result.add(bp);
 			}
 		}catch (SQLException e) {
@@ -400,7 +400,7 @@ public class PromotionManager {
 					"SET pro_start_date=?\r\n" + 
 					"where pro_num=?";
 			java.sql.PreparedStatement pst = conn.prepareStatement(sql);
-			pst.setDate(1, new java.sql.Date(start_date.getTime()));
+			pst.setTimestamp(1, new java.sql.Timestamp(start_date.getTime()));
 			pst.setInt(2, Pro_num);
 			pst.execute();
 			pst.close();
@@ -432,7 +432,7 @@ public class PromotionManager {
 					"SET pro_end_date=?\r\n" + 
 					"where pro_num=?";
 			java.sql.PreparedStatement pst = conn.prepareStatement(sql);
-			pst.setDate(1, new java.sql.Date(end_date.getTime()));
+			pst.setTimestamp(1, new java.sql.Timestamp(end_date.getTime()));
 			pst.setInt(2, Pro_num);
 			pst.execute();
 			pst.close();
