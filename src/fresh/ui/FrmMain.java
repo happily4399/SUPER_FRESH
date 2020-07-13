@@ -29,6 +29,7 @@ public class FrmMain extends JFrame implements ActionListener{
     private JMenuItem  menuItem_UserPasswd=new JMenuItem("修改密码");
     private JMenuItem  menuItem_User_person=new JMenuItem("用户个人信息管理");
     private JMenuItem  menuItem_User_ship = new JMenuItem("地址编号管理");
+    private JMenuItem  menuItem_User_vip = new JMenuItem("成为尊贵的vip");
     
     private JMenu menu_Admin=new JMenu("admin账号管理");
     
@@ -224,6 +225,8 @@ public class FrmMain extends JFrame implements ActionListener{
 			menuItem_User_person.addActionListener(this);
 			menu_User.add(menuItem_User_ship);
 			menuItem_User_ship.addActionListener(this);
+			menu_User.add(menuItem_User_vip);
+			menuItem_User_vip.addActionListener(this);
 			
 			this.menu_User_order.add(this.User_order);
 			User_order.addActionListener(this);
@@ -685,6 +688,10 @@ public class FrmMain extends JFrame implements ActionListener{
 		else if(e.getSource()==this.System_Order) {
 			FrmOrderManager fom = new FrmOrderManager(this,"用户订单",true);
 			
+		}
+		
+		else if(e.getSource()==this.menuItem_User_vip) {
+			Frmvip fv = new Frmvip(this,"成为vip",true);
 		}
 	}
 }	

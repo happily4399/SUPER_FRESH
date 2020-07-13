@@ -21,6 +21,8 @@ public class PromotionManager {
 		if("".equals(String.valueOf(goods_num))) throw new Exception("商品编号不可为空");
 		if("".equals(String.valueOf(Pro_price))) throw new Exception("促销价格不可为空");
 		if("".equals(String.valueOf(Pro_count))) throw new Exception("促销数量不可为空");
+		if(Pro_price==0) throw new Exception("促销价格不可为0");
+		if(Pro_count==0) throw new Exception("促销数量不可为0");
 		if("".equals(String.valueOf(Pro_start_date))) throw new Exception("促销开始日期不可为空");
 		if("".equals(String.valueOf(Pro_end_date))) throw new Exception("促销结束日期不可为空");
 		Connection conn = null;

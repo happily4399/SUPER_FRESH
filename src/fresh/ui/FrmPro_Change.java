@@ -106,7 +106,6 @@ public class FrmPro_Change extends JDialog implements ActionListener {
 				PromotionManager pm = new PromotionManager();
 				pm.ChangePro_name(Pro_num, Pro_name);
 				pm.ChangePro_count(Pro_num, Pro_count);
-				pm.ChangeGoods_num(Pro_num, Goods_num);
 				pm.ChangePro_price(Pro_num, Pro_price);
 				pm.ChangePro_start(Pro_num, Pro_start_date);
 				pm.ChangePro_end(Pro_num, Pro_end_date);

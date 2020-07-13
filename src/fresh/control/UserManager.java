@@ -3,7 +3,10 @@ package fresh.control;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import fresh.model.BeanUser;
@@ -513,5 +516,40 @@ public class UserManager {
 			}
 		}
 		return result;
+	}
+	
+	public void Changvip(String user_Pnum,String vipddl) throws Exception {
+		if("".equals(vipddl)) throw new Exception("到期时间不能为空");
+		SimpleDateFormat sdf2= new SimpleDateFormat("yyyy-MM-dd");
+		java.util.Date start_date = new Date();
+		start_date = sdf2.parse(vipddl);
+		Connection conn=null;
+		try {
+			conn=DBUtil.getConnection();
+			conn.setAutoCommit(false);
+			String sql="UPDATE user\r\n" + 
+					"set User_vip=1,vip_ddl=?\r\n" + 
+					"where user_Pnum=?";
+			java.sql.PreparedStatement pst=conn.prepareStatement(sql);
+			pst.setTimestamp(1, new java.sql.Timestamp(start_date.getTime()));
+			pst.setString(2, user_Pnum);
+			pst.execute();
+			pst.close();
+			conn.commit();
+		}catch (SQLException e) {
+			e.printStackTrace();
+			try {
+				conn.rollback();
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+		}finally{
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO 自动生成的 catch 块
+				e.printStackTrace();
+			}
+		}
 	}
 }

@@ -29,8 +29,8 @@ public class GoodsManager {
 			conn = DBUtil.getConnection();
 			conn.setAutoCommit(false);
 			String sql="INSERT\r\n" + 
-					"INTO goods(category_number,goods_name,goods_price,goods_count,goods_spe,goods_det,vip_price)\r\n" + 
-					"VALUES(?,?,?,?,?,?,?)";
+					"INTO goods(category_number,goods_name,goods_price,goods_count,goods_spe,goods_det,vip_price,sales_count)\r\n" + 
+					"VALUES(?,?,?,?,?,?,?,0)";
 			java.sql.PreparedStatement pst = conn.prepareStatement(sql);
 			pst.setInt(1, category_num);
 			pst.setString(2, goods_name);
@@ -297,6 +297,7 @@ public class GoodsManager {
 				bg.setGoods_count(rs.getInt(6));
 				bg.setGoods_spe(rs.getString(7));
 				bg.setGoods_det(rs.getString(8));
+				bg.setSales_count(rs.getInt(9));
 				result.add(bg);
 			}
 			pst.close();

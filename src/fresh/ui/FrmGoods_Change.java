@@ -90,7 +90,11 @@ public class FrmGoods_Change extends JDialog implements ActionListener {
 			float vipprice = Float.parseFloat(edtvipprice.getText());
 			try {
 				GoodsManager gm = new GoodsManager();
-				gm.ChangeGoods_name(Goods_num, name);
+				if(name.equals(gm.loadbyGoodsnum(Goods_num).getGoods_name())) {
+					
+				}else {
+					gm.ChangeGoods_name(Goods_num, name);
+				}
 				gm.ChangeGoods_count(Goods_num, count);
 				gm.ChangeGoods_spe(Goods_num, spe);
 				gm.ChangeGoods_des(Goods_num, des);

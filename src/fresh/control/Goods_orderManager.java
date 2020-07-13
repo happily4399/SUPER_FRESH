@@ -103,7 +103,7 @@ public class Goods_orderManager {
 			conn = DBUtil.getConnection();
 			String sql = "SELECT *\r\n" + 
 					"FROM goods_order\r\n" + 
-					"WHERE Order_num=?";
+					"WHERE Ship_num=?";
 			java.sql.PreparedStatement pst = conn.prepareStatement(sql);
 			pst.setInt(1, Ship_num);
 			java.sql.ResultSet rs = pst.executeQuery();
@@ -369,9 +369,6 @@ public class Goods_orderManager {
 			Order_detailManager odm = new Order_detailManager();
 			List<BeanOrder_detail> bd = odm.loadbyOrder_num(order_num);
 			GoodsManager gm = new GoodsManager();
-			for(int i=0;i<bd.size();i++) {
-				gm.SubGoods_count(bd.get(i).getGoods_num(), bd.get(i).getOrder_count());
-			}
 		}catch (SQLException e) {
 			e.printStackTrace();
 		}finally{
@@ -510,13 +507,11 @@ public class Goods_orderManager {
     				Order_detailManager odm = new Order_detailManager();
     				List<BeanOrder_detail> bod = odm.loadbyOrder_num(bgo.get(i).getOrder_num());
     				for(int j=0;j<bod.size();j++) {
-    					if(bod.get(j).getDis_num()!=0) {
-    						UserManager um = new UserManager();
-    						GoodsManager gm = new GoodsManager();
-    						Goods_discountManager gdm = new Goods_discountManager();
-    						BeanGoods bg = gm.loadbyGoodsnum(bod.get(j).getGoods_num());
-    						Ori_price = Ori_price+bg.getGoods_price()*bod.get(j).getOrder_count();
-    					}
+    					UserManager um = new UserManager();
+    					GoodsManager gm = new GoodsManager();
+    					Goods_discountManager gdm = new Goods_discountManager();
+    					BeanGoods bg = gm.loadbyGoodsnum(bod.get(j).getGoods_num());
+    					Ori_price = Ori_price+bg.getGoods_price()*bod.get(j).getOrder_count();
     				}
     				money = money+Ori_price-bgo.get(i).getFin_price();
 				}

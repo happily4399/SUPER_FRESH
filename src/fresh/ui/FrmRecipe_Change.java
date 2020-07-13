@@ -72,7 +72,11 @@ public class FrmRecipe_Change extends JDialog implements ActionListener {
 			String step = edtstep.getText();
 			try {
 				RecipeManager rm = new RecipeManager();
-				rm.ChangeRecipe_name(Recipe_num, name);
+				if(name.equals(rm.LoadbyNum(Recipe_num).getRecipe_name())) {
+					
+				}else {
+					rm.ChangeRecipe_name(Recipe_num, name);
+				}
 				rm.ChangeRecipe_mater(Recipe_num, mater);
 				rm.ChangeRecipe_step(Recipe_num, step);
 				this.setVisible(false);

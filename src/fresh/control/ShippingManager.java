@@ -163,9 +163,10 @@ public class ShippingManager {
 	public void Delete(int Ship_num) throws Exception {
 		Goods_orderManager gom = new Goods_orderManager();
 		if("".equals(String.valueOf(Ship_num))) throw new Exception("地址编号不可为空");
+		System.out.println(gom.LoadbyShip_num(Ship_num).size());
+		if(!(gom.LoadbyShip_num(Ship_num).size()==0)) throw new Exception("在Goods_order表中仍存在此地址的信息，拒绝删除");
 		Connection conn = null;
 		try {
-			if(!(gom.LoadbyShip_num(Ship_num).size()==0)) throw new Exception("在Goods_order表中仍存在此地址的信息，拒绝删除");
 			conn = DBUtil.getConnection();
 			String sql = "DELETE \r\n" + 
 					"FROM shipping\r\n" + 

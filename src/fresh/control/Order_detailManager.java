@@ -233,7 +233,6 @@ public class Order_detailManager {
 		GoodsManager gm = new GoodsManager();
 		bg = gm.loadbyGoodsnum(bod.getGoods_num());
 		//传输会员价
-		System.out.println(ori_price);
 		if(BeanUser.currentloginUser.getUser_vip()==1 && bg.getVip_price()!=0) {
 			if(BeanUser.currentloginUser.getVip_ddl().getTime() >= new Date().getTime()) {
 				ori_price = bg.getVip_price();
@@ -243,7 +242,6 @@ public class Order_detailManager {
 		}else {
 			ori_price = bg.getGoods_price();
 		}
-		
 		PromotionManager pm = new PromotionManager();
 		if(pm.IsHave(bod.getGoods_num())) {
 			pro_price = pm.LoadByGoods_num(bod.getGoods_num()).getPro_price();
@@ -253,7 +251,7 @@ public class Order_detailManager {
 		if(bod.getOrder_count() > pro_count && pro_count!=0) {
 			sum_price = pro_price * pro_count + ori_price * (bod.getOrder_count() - pro_count);
 		}else if(pro_count >= bod.getOrder_count()&&pro_count!=0){
-			sum_price = pro_price*pro_count;
+			sum_price = pro_price*bod.getOrder_count();
 		}else {
 			sum_price = ori_price * (bod.getOrder_count() - pro_count);
 		}

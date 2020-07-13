@@ -243,7 +243,7 @@ public class FrmMy_Order extends JDialog implements ActionListener {
 						if(this.cmbbuytype.getSelectedItem().toString()=="下单") {
 							if("0".equals(Good_ordertblData[i][1].toString())) throw new Exception("请输入地址编号");
 							if("".equals(Good_ordertblData[i][5].toString())) throw new Exception("请输入要求送达时间");
-							for(int j=0;i<bod.size();j++) {
+							for(int j=0;j<bod.size();j++) {
 								gm.SubGoods_count(bod.get(j).getGoods_num(), bod.get(j).getOrder_count());
 							}
 							gom.reload_price(order_num, gom.LoadbyOrder_num(order_num).getCoupon_num());
